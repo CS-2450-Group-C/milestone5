@@ -1,5 +1,5 @@
 '''Module containing the Machine Class.'''
-
+from formatWord import format_word
 
 class Machine:
     '''Machine Class. Represents a machine capable of reading and executing the
@@ -167,18 +167,7 @@ class Machine:
     def write(self, memory_index):
         '''Write a word from a location in memory to the screen'''
         word = self._memory[memory_index]
-        output = str(abs(word))
-
-        # Pad the number with zeroes until there are four digits
-        output = output.rjust(4, "0")
-
-        # Add a positive or negative symbol depending upon the number
-        if word < 0:
-            output = "-" + output
-        else:
-            output = "+" + output
-
-        print(output)
+        print(format_word(word))
 
     def load(self, memory_index):
         '''Load what is at a location in memory to the accumulator'''

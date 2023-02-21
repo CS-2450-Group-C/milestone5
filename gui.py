@@ -1,4 +1,5 @@
 from uvsim import Machine
+from formatWord import format_word
 import tkinter as tk
 
 class GUI:
@@ -11,6 +12,7 @@ class GUI:
         root.grid_rowconfigure(0, weight=1)
         root.columnconfigure(0, weight=1)
         root.resizable(width=False, height=False)
+
         ## Memory widget 
         # Create container to keep at left side of window
         mem_container = tk.Frame(root)
@@ -39,7 +41,7 @@ class GUI:
         mem = self._machine.get_memory()
         for loc, word in enumerate(mem):
             location_label = tk.Label(mem_grid, text=loc)
-            word_entry = tk.Label(mem_grid, text=word)
+            word_entry = tk.Label(mem_grid, text=format_word(word), width=5)
             location_label.grid(row=loc, column=0, sticky=tk.E, padx=2, pady=2)
             word_entry.grid(row=loc, column=1, stick=tk.W, padx=2, pady=2)
         # Reconfigure for scrolling
@@ -74,7 +76,7 @@ class GUI:
 
 def main():
     """For testing purposes only."""
-    memory = [1, 2, 3, 4, 5]
+    memory = [5689, -2451, +1254, 123, -34]
     machine = Machine(memory)
     gui = GUI(machine)
 
