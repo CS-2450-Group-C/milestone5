@@ -66,6 +66,9 @@ class Machine:
     
     def get_memory(self):
         return self._memory
+    
+    def set_memory(self, memory):
+        self._memory = memory
 
     def debug_get_program_counter(self):
         '''Returns current value of the machine program counter for debuging and

@@ -1,21 +1,26 @@
 from uvsim import Machine
+from Parser import Parser
 from formatWord import format_word
 import tkinter as tk
+from tkinter import filedialog
 
 class GUI:
     def __init__(self, machine):
         self._machine = machine
+        self._root = None
+        self._mem_labels = []
         self.make_window()
     
     def make_window(self):
-        root = tk.Tk()
-        root.grid_rowconfigure(0, weight=1)
-        root.columnconfigure(0, weight=1)
-        root.resizable(width=False, height=False)
+        """Creates the window and adds all elements"""
+        self._root = tk.Tk()
+        self._root.grid_rowconfigure(0, weight=1)
+        self._root.columnconfigure(0, weight=1)
+        self._root.resizable(width=False, height=False)
 
         ## Memory widget 
         # Create container to keep at left side of window
-        mem_container = tk.Frame(root)
+        mem_container = tk.Frame(self._root)
         mem_container.grid(row=0, column=0)
         # Create frame for memory
         mem_frame = tk.Frame(mem_container)
@@ -39,21 +44,24 @@ class GUI:
         mem_canvas.create_window((0, 0), window=mem_grid, anchor=tk.NW)
         # Create memory location labels and word entry to place into grid
         mem = self._machine.get_memory()
+        self._mem_labels 
         for loc, word in enumerate(mem):
             location_label = tk.Label(mem_grid, text=loc)
-            word_entry = tk.Label(mem_grid, text=format_word(word), width=5)
+            word_entry = tk.Label(mem_grid, width=5)
             location_label.grid(row=loc, column=0, sticky=tk.E, padx=2, pady=2)
             word_entry.grid(row=loc, column=1, stick=tk.W, padx=2, pady=2)
+            self._mem_labels.append(word_entry)
+        self.update_memory_labels()
         # Reconfigure for scrolling
         mem_grid.update_idletasks()
         mem_canvas.config(scrollregion=mem_canvas.bbox("all"))
 
         ## Buttons, input, output
         # Create container to keep at the right side of window
-        general_container = tk.Frame(root, bg="orange")
+        general_container = tk.Frame(self._root, bg="orange")
         general_container.grid(row=0, column=1, sticky=tk.NS)
         # Create import button
-        import_button = tk.Button(general_container, bg="green", text ="Import")
+        import_button = tk.Button(general_container, bg="green", text ="Import", command=self.import_memory)
         import_button.grid(row=0, column=0, sticky=tk.W)
         # Create run button
         run_button = tk.Button(general_container, bg="green", text="Run")
@@ -69,9 +77,23 @@ class GUI:
         output_text = tk.Text(general_container)
         output_text.grid(row=5, column=0, sticky=tk.W)
         #output_text.config(state=tk.DISABLED)
+        self._root.mainloop()
 
-        root.mainloop()
 
+    def import_memory(self):
+        """Import memory from a given file"""
+        self._root.filename = filedialog.askopenfilename(initialdir="./", title="Select a text file containing BasicML code", filetypes=(('text files', '.txt'),))
+        parser = Parser()
+        memory = parser.parse(self._root.filename)
+        self._machine.set_memory(memory)
+        self.update_memory_labels()
+
+
+    def update_memory_labels(self):
+        """Sets the GUI labels with words from memory machine"""
+        mem = self._machine.get_memory()
+        for loc, word in enumerate(mem):
+            self._mem_labels[loc].config(text=format_word(word))
 
 
 def main():
