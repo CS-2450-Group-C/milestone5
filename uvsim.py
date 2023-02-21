@@ -63,6 +63,9 @@ class Machine:
     def is_running(self):
         '''Returns the current running state of the machine instance'''
         return self._running
+    
+    def get_memory(self):
+        return self._memory
 
     def debug_get_program_counter(self):
         '''Returns current value of the machine program counter for debuging and
