@@ -4,6 +4,7 @@
 from inputoutput import InputOutput
 from arithmetic import Arithmetic
 from loadstore import LoadStore
+from control import Control
 
 class Machine:
     '''Machine Class. Represents a machine capable of reading and executing the
@@ -30,6 +31,7 @@ class Machine:
         self.op_io = InputOutput(self)
         self.op_ar = Arithmetic(self)
         self.op_ls = LoadStore(self)
+        self.op_br = Control(self)
 
         for i, value in enumerate(init_mem):
             self._memory[i] = value
@@ -64,7 +66,7 @@ class Machine:
         elif str_instruction[0] == "3":
             self.op_ar.interpret(str_instruction[1], int(str_instruction[2:]))
         elif str_instruction[0] == "4":
-            self.op_br(str_instruction[1], int(str_instruction[2:]))
+            self.op_br.interpret(str_instruction[1], int(str_instruction[2:]))
         else:
             return -1
         return 0
@@ -122,38 +124,6 @@ class Machine:
     def set_program_counter(self, value):
         '''Sets current value of the machine program counter.'''
         self._program_counter = value
-
-    def op_br(self, op_code, memory_index):
-        '''A branching method of all the branch operation.
-        Possible op_codes:
-            "0": branch to memory location
-            "1": branch to memory location if accumulator is negative
-            "2": branch to memory location if accumulator is zero
-            "3": halt machine operation'''
-        if op_code == "0":
-            self.branch(memory_index)
-        elif op_code == "1":
-            self.branch_neg(memory_index)
-        elif op_code == "2":
-            self.branch_zero(memory_index)
-        elif op_code == "3":
-            self.halt()
-
-    def branch(self, memory_index):
-        '''Set the program counter to the new memory location'''
-        self._program_counter = memory_index
-
-    def branch_neg(self, memory_index):
-        '''If the accumulator is negative, branch to memory_index'''
-        if self._accumulator < 0:
-            # Set the program counter to the new memory location
-            self._program_counter = memory_index
-
-    def branch_zero(self, memory_index):
-        '''If the accumulator is zero, branch to memory_index'''
-        if self._accumulator == 0:
-            # Set the program counter to the new memory location
-            self._program_counter = memory_index
 
     def halt(self):
         '''Stop the program'''
