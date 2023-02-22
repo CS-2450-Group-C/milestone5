@@ -94,14 +94,23 @@ class Machine:
         testing puposes.'''
         return self._program_counter
 
-    def debug_get_accumulator(self):
+    def debug_get_accumulator(self): # depreciate
         '''Returns current value of the machine accumulator for debuging and
         testing puposes.'''
         return self._accumulator
 
-    def debug_set_accumulator(self, val):
+    def debug_set_accumulator(self, val): # depreciate
         '''Sets current value of the machine accumulator for testing 
         puposes.'''
+        self._accumulator = val
+
+    def get_accumulator(self):
+        '''Returns current value of the machine accumulator for actual
+        puposes.'''
+        return self._accumulator
+
+    def set_accumulator(self, val):
+        '''Sets current value of the machine accumulator for actual puposes.'''
         self._accumulator = val
 
     def op_ls(self, op_code, memory_index):
