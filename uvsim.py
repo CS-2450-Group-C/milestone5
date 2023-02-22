@@ -4,6 +4,7 @@ from Input import Input
 
 # op imports
 from inputoutput import InputOutput
+from arithmetic import Arithmetic
 
 class Machine:
     '''Machine Class. Represents a machine capable of reading and executing the
@@ -28,6 +29,7 @@ class Machine:
         self._running = True
 
         self.op_io = InputOutput(self)
+        self.op_ar = Arithmetic(self)
 
         for i, value in enumerate(init_mem):
             self._memory[i] = value
@@ -60,7 +62,7 @@ class Machine:
         elif str_instruction[0] == "2":
             self.op_ls(str_instruction[1], int(str_instruction[2:]))
         elif str_instruction[0] == "3":
-            self.op_ar(str_instruction[1], int(str_instruction[2:]))
+            self.op_ar.interpret(str_instruction[1], int(str_instruction[2:]))
         elif str_instruction[0] == "4":
             self.op_br(str_instruction[1], int(str_instruction[2:]))
         else:
@@ -123,22 +125,6 @@ class Machine:
         elif op_code == "1":
             self.store(memory_index)
 
-    def op_ar(self, op_code, memory_index):
-        '''A branching method of all the arithmetic operations.
-        Possible op_codes:
-            "0": add from memory location and accumulator to accumulator
-            "1": subtract memory location and accumulator to accumulator
-            "2": divide memory location and accumulator to accumulator
-            "3": multiply memory location and accumulator to accumulator'''
-        if op_code == "0":
-            self.add(memory_index)
-        elif op_code == "1":
-            self.subtract(memory_index)
-        elif op_code == "2":
-            self.divide(memory_index)
-        elif op_code == "3":
-            self.multiply(memory_index)
-
     def op_br(self, op_code, memory_index):
         '''A branching method of all the branch operation.
         Possible op_codes:
@@ -162,23 +148,6 @@ class Machine:
     def store(self, memory_index):
         '''Store what is in the accumulator into a location in memory'''
         self._memory[memory_index] = self._accumulator
-
-    def add(self, memory_index):
-        '''Add word from memory to word in accumulator'''
-        self._accumulator += self._memory[memory_index]
-
-    def subtract(self, memory_index):
-        '''Subtract word from memory from the word in accumulator'''
-        self._accumulator -= self._memory[memory_index]
-
-    def divide(self, memory_index):
-        '''Divide word in accumulator by word in a memory index. NOTE: This
-        function does floor division, which removes any decimal values'''
-        self._accumulator //= self._memory[memory_index]
-
-    def multiply(self, memory_index):
-        '''Multiply word in accumulator by word in a memory index'''
-        self._accumulator *= self._memory[memory_index]
 
     def branch(self, memory_index):
         '''Set the program counter to the new memory location'''
