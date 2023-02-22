@@ -115,6 +115,14 @@ class Machine:
         '''Sets current value of the machine accumulator for actual puposes.'''
         self._accumulator = val
 
+    def get_program_counter(self):
+        '''Returns current value of the machine program counter.'''
+        return self._program_counter
+
+    def set_program_counter(self, value):
+        '''Sets current value of the machine program counter.'''
+        self._program_counter = value
+
     def op_br(self, op_code, memory_index):
         '''A branching method of all the branch operation.
         Possible op_codes:
