@@ -1,17 +1,23 @@
-"""These are input and output functions. They will either get
-input from the user and store it in memory, or write a word
-from memory to the screen."""
+from formatWord import format_word
+from Input import Input
 
-def read(memory_index):
-    # Read takes user input and stores that in a location in memory
-    new_word = input("Enter a new four-digit word. Ex: +2156, -4328: ")
-    self.memory[memory_index] = accumulator
+class InputOutput:
+    def __init__(self, parent):
+        self._parent = parent
 
-def store(memory_index):
-    # Store what is in the accumulator into a location in memory
+    def interpret(self, op_code, memory_index):
+        if op_code == "0":
+            self.read(memory_index)
+        elif op_code == "1":
+            self.write(memory_index)
 
-    # Psuedo code for storing in memory
-    self.memory[memory_index] = accumulator
+    def read(self, memory_index):
+        '''Read takes user input and stores that in a location in memory'''
+        input_obj = Input()
+        word = input_obj.get_input()
+        self._parent.set_memory_at_address(memory_index, int(word))
 
-def main():
-    """For testing purpose"""
+    def write(self, memory_index):
+        '''Write a word from a location in memory to the screen'''
+        word = self._parent.get_memory_at_address(memory_index)
+        print(format_word(word))

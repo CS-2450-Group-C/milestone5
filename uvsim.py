@@ -3,7 +3,7 @@ from formatWord import format_word
 from Input import Input
 
 # op imports
-# from inputoutput import
+from inputoutput import InputOutput
 
 class Machine:
     '''Machine Class. Represents a machine capable of reading and executing the
@@ -26,6 +26,9 @@ class Machine:
         self._program_counter = 0
         self._memory = [0000] * 100
         self._running = True
+
+        self.op_io = InputOutput(self)
+
         for i, value in enumerate(init_mem):
             self._memory[i] = value
         print(self._memory)
@@ -53,7 +56,7 @@ class Machine:
         str_instruction = str(instruction)
 
         if str_instruction[0] == "1":
-            self.op_io(str_instruction[1], int(str_instruction[2:]))
+            self.op_io.interpret(str_instruction[1], int(str_instruction[2:]))
         elif str_instruction[0] == "2":
             self.op_ls(str_instruction[1], int(str_instruction[2:]))
         elif str_instruction[0] == "3":
@@ -101,16 +104,6 @@ class Machine:
         puposes.'''
         self._accumulator = val
 
-    def op_io(self, op_code, memory_index):
-        '''A branching method of all the input/output operations.
-        Possible op_codes:
-            "0": read from keyboard to memory location
-            "1": write from memory location to screen'''
-        if op_code == "0":
-            self.read(memory_index)
-        elif op_code == "1":
-            self.write(memory_index)
-
     def op_ls(self, op_code, memory_index):
         '''A branching method of all the load/store operations.
         Possible op_codes:
@@ -152,17 +145,6 @@ class Machine:
             self.branch_zero(memory_index)
         elif op_code == "3":
             self.halt()
-
-    def read(self, memory_index):
-        '''Read takes user input and stores that in a location in memory'''
-        input_obj = Input()
-        word = input_obj.get_input()
-        self._memory[memory_index] = int(word)
-
-    def write(self, memory_index):
-        '''Write a word from a location in memory to the screen'''
-        word = self._memory[memory_index]
-        print(format_word(word))
 
     def load(self, memory_index):
         '''Load what is at a location in memory to the accumulator'''
