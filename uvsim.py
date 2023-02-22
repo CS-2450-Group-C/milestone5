@@ -64,6 +64,12 @@ class Machine:
         '''Returns the current running state of the machine instance'''
         return self._running
     
+    def reset(self):
+        '''Prepare machine to rerun program'''
+        self._accumulator = 0
+        self._program_counter = 0
+        self._running = True
+
     def get_memory(self):
         return self._memory
     

@@ -3,6 +3,8 @@ from Parser import Parser
 from formatWord import format_word
 import tkinter as tk
 from tkinter import filedialog
+import contextlib
+import io
 
 class GUI:
     def __init__(self, machine):
@@ -13,7 +15,7 @@ class GUI:
         self.make_window()
     
     def make_window(self):
-        """Creates the window and adds all elements"""
+        """Creates the window and adds all elements."""
         self._root = tk.Tk()
         self._root.grid_rowconfigure(0, weight=1)
         self._root.columnconfigure(0, weight=1)
@@ -65,7 +67,7 @@ class GUI:
         import_button = tk.Button(general_container, bg="green", text ="Import", command=self.import_memory)
         import_button.grid(row=0, column=0, sticky=tk.W)
         # Create run button
-        run_button = tk.Button(general_container, bg="green", text="Run")
+        run_button = tk.Button(general_container, bg="green", text="Run", command=self.run)
         run_button.grid(row=1, column=0, sticky=tk.W)
         # Create Input Field
         input_label = tk.Label(general_container, text="Input")
@@ -78,14 +80,13 @@ class GUI:
         self._output = tk.Text(general_container)
         self._output.grid(row=5, column=0, sticky=tk.W)
         self._output.config(state=tk.DISABLED)
-        self.print_to_output("Testing")
+        self.print_to_output("Welcome to the UVSim")
 
         self._root.mainloop()
 
 
-
     def import_memory(self):
-        """Import memory from a given file"""
+        """Import memory from a given file."""
         self._root.filename = filedialog.askopenfilename(initialdir="./", title="Select a text file containing BasicML code", filetypes=(('text files', '.txt'),))
         try:
             parser = Parser()
@@ -94,13 +95,28 @@ class GUI:
             self.print_to_output(f"Error: File {self._root.filename.split('/')[-1]} is not formatted properly")
             self.print_to_output(str(ex))
             return
-        self._machine.set_memory(memory)
+        self._machine = Machine(memory)
         self.update_memory_labels()
         self.print_to_output(f"File {self._root.filename.split('/')[-1]} was imported successfully")
 
 
+    def run(self):
+        """Run the program."""
+        self.print_to_output("Program starting...")
+        # Capture terminal output
+        captured_output = io.StringIO()
+        with contextlib.redirect_stdout(captured_output):
+            # Run program
+            while self._machine.is_running():
+                self._machine.tick()
+        self.print_to_output(captured_output.getvalue(), '')
+        self.print_to_output("Program ended.")
+        # Reset the accumulator and program counter
+        self._machine.reset()
+
+
     def update_memory_labels(self):
-        """Sets the GUI labels with words from memory machine"""
+        """Sets the GUI labels with words from memory machine."""
         mem = self._machine.get_memory()
         for loc, word in enumerate(mem):
             self._mem_labels[loc].config(text=format_word(word))
@@ -114,7 +130,8 @@ class GUI:
 
 def main():
     """For testing purposes only."""
-    memory = [5689, -2451, +1254, 123, -34]
+    # Should print 1234
+    memory = [1102, 4300, 1234]
     machine = Machine(memory)
     gui = GUI(machine)
 
