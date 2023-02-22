@@ -2,6 +2,9 @@
 from formatWord import format_word
 from Input import Input
 
+# op imports
+# from inputoutput import
+
 class Machine:
     '''Machine Class. Represents a machine capable of reading and executing the
     BasicML language.
@@ -76,6 +79,12 @@ class Machine:
     
     def set_memory(self, memory):
         self._memory = memory
+
+    def get_memory_at_address(self, address):
+        return self._memory[address]
+    
+    def set_memory_at_address(self, address, memory):
+        self._memory[address] = memory
 
     def debug_get_program_counter(self):
         '''Returns current value of the machine program counter for debuging and
