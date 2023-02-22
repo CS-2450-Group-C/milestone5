@@ -9,6 +9,7 @@ class GUI:
         self._machine = machine
         self._root = None
         self._mem_labels = []
+        self._output = None
         self.make_window()
     
     def make_window(self):
@@ -74,19 +75,28 @@ class GUI:
         # Create output console
         output_label = tk.Label(general_container, text="Output")
         output_label.grid(row=4, column=0, sticky=tk.W)
-        output_text = tk.Text(general_container)
-        output_text.grid(row=5, column=0, sticky=tk.W)
-        #output_text.config(state=tk.DISABLED)
+        self._output = tk.Text(general_container)
+        self._output.grid(row=5, column=0, sticky=tk.W)
+        self._output.config(state=tk.DISABLED)
+        self.print_to_output("Testing")
+
         self._root.mainloop()
+
 
 
     def import_memory(self):
         """Import memory from a given file"""
         self._root.filename = filedialog.askopenfilename(initialdir="./", title="Select a text file containing BasicML code", filetypes=(('text files', '.txt'),))
-        parser = Parser()
-        memory = parser.parse(self._root.filename)
+        try:
+            parser = Parser()
+            memory = parser.parse(self._root.filename)
+        except ValueError as ex:
+            self.print_to_output(f"Error: File {self._root.filename.split('/')[-1]} is not formatted properly")
+            self.print_to_output(str(ex))
+            return
         self._machine.set_memory(memory)
         self.update_memory_labels()
+        self.print_to_output(f"File {self._root.filename.split('/')[-1]} was imported successfully")
 
 
     def update_memory_labels(self):
@@ -94,6 +104,12 @@ class GUI:
         mem = self._machine.get_memory()
         for loc, word in enumerate(mem):
             self._mem_labels[loc].config(text=format_word(word))
+
+
+    def print_to_output(self, text, end="\n"):
+        self._output.config(state=tk.NORMAL)
+        self._output.insert(tk.END, text + end)
+        self._output.config(state=tk.DISABLED)
 
 
 def main():
