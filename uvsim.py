@@ -35,7 +35,7 @@ class Machine:
 
         for i, value in enumerate(init_mem):
             self._memory[i] = value
-        print(self._memory)
+        # print(self._memory)
 
     def tick(self):
         '''Obtains the next operation, increments the program counter, and
