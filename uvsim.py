@@ -1,5 +1,6 @@
 '''Module containing the Machine Class.'''
 from formatWord import format_word
+from Input import Input
 
 class Machine:
     '''Machine Class. Represents a machine capable of reading and executing the
@@ -145,33 +146,9 @@ class Machine:
 
     def read(self, memory_index):
         '''Read takes user input and stores that in a location in memory'''
-        new_word = input(
-            f"Enter a new four-digit word to store in memory location \
-                {memory_index}. Ex: +2156, -4328: ")
-        word_num = 0
-        # If the user input exceeds the maximum word length
-        if len(new_word) > 5 or len(new_word) < 4:
-            raise ValueError(f"Input word is the wrong length: {new_word} \n")
-
-        try:
-            # If the word has a positive or negative symbol
-            # check if it can convert to an int
-            if len(new_word) == 5:
-                word_num = int(new_word[1:])
-
-                # Convert the word to negative if it is negative
-                if new_word[0] == "-":
-                    word_num *= -1
-            # If the word has no symbol, check if it can
-            # convert to an int
-            else:
-                word_num = int(new_word)
-        except:
-            # Pylint doesn't like
-            raise ValueError(f"Invalid word {new_word}\n")
-        # this and I don't know why.
-
-        self._memory[memory_index] = word_num
+        input_obj = Input()
+        word = input_obj.get_input()
+        self._memory[memory_index] = int(word)
 
     def write(self, memory_index):
         '''Write a word from a location in memory to the screen'''
