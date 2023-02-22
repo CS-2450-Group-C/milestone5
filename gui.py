@@ -7,7 +7,7 @@ import contextlib
 import io
 
 class GUI:
-    def __init__(self, machine):
+    def __init__(self, machine=Machine()):
         self._machine = machine
         self._root = None
         self._mem_labels = []
@@ -130,11 +130,10 @@ class GUI:
 
 def main():
     """For testing purposes only."""
-    # Should print 1234
+    # Prints 1234 when run
     memory = [1102, 4300, 1234]
     machine = Machine(memory)
     gui = GUI(machine)
-
 
 if __name__ == "__main__":
     main()

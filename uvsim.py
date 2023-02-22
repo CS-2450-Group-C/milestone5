@@ -18,7 +18,7 @@ class Machine:
 
     other methods are primarily used internally'''
 
-    def __init__(self, init_mem):
+    def __init__(self, init_mem=[]):
         self._accumulator = 0
         self._program_counter = 0
         self._memory = [0000] * 100

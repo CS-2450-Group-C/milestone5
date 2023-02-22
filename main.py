@@ -2,16 +2,17 @@
 import sys
 from uvsim import Machine
 from parse import parse
-
+from gui import GUI
 
 def main():
     '''Main function. reads the invocation parameters, calls the file parser,
     and makes the machine'''
-    # Ensure file is given
+    ## Run from gui if no file is given
     if len(sys.argv) < 2:
-        print("Usage: python main.py fileName.txt")
+        gui = GUI()
         return
 
+    ## Run from command line if file is given
     # Fill memory from given file
     memory = []
     try:
@@ -19,10 +20,8 @@ def main():
     except ValueError as ex:
         print(ex)
         return
-
     # Create new machine from parsed memory
     machine = Machine(memory)
-
     while machine.is_running():
         machine.tick()
 
