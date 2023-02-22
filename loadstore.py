@@ -2,7 +2,7 @@ class LoadStore:
     def __init__(self, parent):
         self._parent = parent
 
-    def interpret(self, op_code, memory_index):
+    def __call__(self, op_code, memory_index):
         '''A branching method of all the load/store operations.
         Possible op_codes:
             "0": load from memory location to accumulator

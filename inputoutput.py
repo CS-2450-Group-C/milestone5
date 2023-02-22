@@ -5,7 +5,7 @@ class InputOutput:
     def __init__(self, parent):
         self._parent = parent
 
-    def interpret(self, op_code, memory_index):
+    def __call__(self, op_code, memory_index):
         if op_code == "0":
             self.read(memory_index)
         elif op_code == "1":

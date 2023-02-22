@@ -2,7 +2,7 @@ class Control:
     def __init__(self, parent):
         self._parent = parent
 
-    def interpret(self, op_code, memory_index):
+    def __call__(self, op_code, memory_index):
         '''A branching method of all the branch operation.
         Possible op_codes:
             "0": branch to memory location

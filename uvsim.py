@@ -60,13 +60,13 @@ class Machine:
         str_instruction = str(instruction)
 
         if str_instruction[0] == "1":
-            self.op_io.interpret(str_instruction[1], int(str_instruction[2:]))
+            self.op_io(str_instruction[1], int(str_instruction[2:]))
         elif str_instruction[0] == "2":
-            self.op_ls.interpret(str_instruction[1], int(str_instruction[2:]))
+            self.op_ls(str_instruction[1], int(str_instruction[2:]))
         elif str_instruction[0] == "3":
-            self.op_ar.interpret(str_instruction[1], int(str_instruction[2:]))
+            self.op_ar(str_instruction[1], int(str_instruction[2:]))
         elif str_instruction[0] == "4":
-            self.op_br.interpret(str_instruction[1], int(str_instruction[2:]))
+            self.op_br(str_instruction[1], int(str_instruction[2:]))
         else:
             return -1
         return 0

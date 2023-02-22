@@ -2,7 +2,7 @@ class Arithmetic:
     def __init__(self, parent):
         self._parent = parent
 
-    def interpret(self, op_code, memory_index):
+    def __call__(self, op_code, memory_index):
         '''A branching method of all the arithmetic operations.
         Possible op_codes:
             "0": add from memory location and accumulator to accumulator
