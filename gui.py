@@ -12,6 +12,9 @@ class GUI:
         self._root = None
         self._mem_labels = []
         self._output = None
+        self._input_entry = None
+        self._input_button = None
+        self._input_value = None
         self.make_window()
     
     def make_window(self):
@@ -69,19 +72,25 @@ class GUI:
         # Create run button
         run_button = tk.Button(general_container, bg="green", text="Run", command=self.run)
         run_button.grid(row=1, column=0, sticky=tk.W)
-        # Create Input Field
+        # Create Input Entry
         input_label = tk.Label(general_container, text="Input")
         input_label.grid(row=2, column=0, sticky=tk.W)
-        input_field = tk.Entry(general_container)
-        input_field.grid(row=3, column=0, sticky=tk.W)
+        input_entry = tk.Entry(general_container)
+        input_entry.grid(row=3, column=0, sticky=tk.W)
+        self._input_entry = input_entry
+        self._input_value = tk.StringVar()
+        input_button = tk.Button(general_container, bg="green", text="Enter", command=lambda: self._input_value.set(1))
+        input_button.grid(row=4, column=0, sticky=tk.W)
+        self._input_button = input_button
         # Create output console
         output_label = tk.Label(general_container, text="Output")
-        output_label.grid(row=4, column=0, sticky=tk.W)
+        output_label.grid(row=5, column=0, sticky=tk.W)
         self._output = tk.Text(general_container)
-        self._output.grid(row=5, column=0, sticky=tk.W)
+        self._output.grid(row=6, column=0, sticky=tk.W)
         self._output.config(state=tk.DISABLED)
         self.print_to_output("Welcome to the UVSim")
 
+        # self.wait_for_input()
         self._root.mainloop()
 
 
@@ -126,6 +135,13 @@ class GUI:
         self._output.config(state=tk.NORMAL)
         self._output.insert(tk.END, text + end)
         self._output.config(state=tk.DISABLED)
+
+
+    def wait_for_input(self):
+        print("Awaiting Input")
+        self._input_button.wait_variable(self._input_value)
+        print("Input was " + self._input_value.get())
+        self._input_value = ''
 
 
 def main():
