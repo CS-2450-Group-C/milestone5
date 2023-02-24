@@ -27,6 +27,7 @@ class Machine:
         self._program_counter = 0
         self._memory = [0000] * 100
         self._running = True
+        self._needs_input = -1
 
         self.op_io = InputOutput(self)
         self.op_ar = Arithmetic(self)
@@ -42,6 +43,7 @@ class Machine:
         passes the operation to the interpret_instruction() method for further
         processing.'''
         self._running = True
+        self._needs_input = -1
         operation_address = self._program_counter
         operation = self._memory[operation_address]
         self._program_counter += 1
@@ -74,6 +76,12 @@ class Machine:
     def is_running(self):
         '''Returns the current running state of the machine instance'''
         return self._running
+    
+    def get_needs_input(self):
+        return self._needs_input
+    
+    def set_needs_input(self, memory_index):
+        self._needs_input = memory_index
     
     def reset(self):
         '''Prepare machine to rerun program'''

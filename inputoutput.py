@@ -1,5 +1,4 @@
 from formatWord import format_word
-from Input import Input
 
 class InputOutput:
     def __init__(self, parent):
@@ -13,11 +12,12 @@ class InputOutput:
 
     def read(self, memory_index):
         '''Read takes user input and stores that in a location in memory'''
-        input_obj = Input()
-        word = input_obj.get_input()
-        self._parent.set_memory_at_address(memory_index, int(word))
+        self._parent.set_needs_input(memory_index)
+        # input_obj = Input()
+        # word = input_obj.get_input()
+        # self._parent.set_memory_at_address(memory_index, int(word))
 
     def write(self, memory_index):
         '''Write a word from a location in memory to the screen'''
         word = self._parent.get_memory_at_address(memory_index)
-        print(format_word(word))
+        print(f"Output from address {memory_index}: {format_word(word)}")

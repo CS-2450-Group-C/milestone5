@@ -3,6 +3,8 @@ import sys
 from uvsim import Machine
 from parse import parse
 from gui import GUI
+from Input import Input
+from formatWord import format_word
 
 def main():
     '''Main function. reads the invocation parameters, calls the file parser,
@@ -10,6 +12,7 @@ def main():
     ## Run from gui if no file is given
     if len(sys.argv) < 2:
         gui = GUI()
+        gui.make_window()
         return
 
     ## Run from command line if file is given
@@ -24,6 +27,14 @@ def main():
     machine = Machine(memory)
     while machine.is_running():
         machine.tick()
+        if machine.get_needs_input() > -1:
+            print(f"Awaiting input for memory location {machine.get_needs_input()}...")
+            input = Input()
+            word = input.get_input()
+            machine.set_memory_at_address(machine.get_needs_input(), word)
+            print(f"{format_word(word)} was stored at memory address {machine.get_needs_input()}.")
+            print()
+
 
 
 if __name__ == "__main__":

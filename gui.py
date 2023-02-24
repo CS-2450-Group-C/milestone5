@@ -1,5 +1,6 @@
 from uvsim import Machine
 from Parser import Parser
+from Input import Input
 from formatWord import format_word
 import tkinter as tk
 from tkinter import filedialog
@@ -15,7 +16,6 @@ class GUI:
         self._input_entry = None
         self._input_button = None
         self._input_value = None
-        self.make_window()
     
     def make_window(self):
         """Creates the window and adds all elements."""
@@ -79,7 +79,7 @@ class GUI:
         input_entry.grid(row=3, column=0, sticky=tk.W)
         self._input_entry = input_entry
         self._input_value = tk.StringVar()
-        input_button = tk.Button(general_container, bg="green", text="Enter", command=lambda: self._input_value.set(1))
+        input_button = tk.Button(general_container, bg="green", text="Enter", command=lambda: self._input_value.set(self._input_entry.get()))
         input_button.grid(row=4, column=0, sticky=tk.W)
         self._input_button = input_button
         # Create output console
@@ -90,7 +90,6 @@ class GUI:
         self._output.config(state=tk.DISABLED)
         self.print_to_output("Welcome to the UVSim")
 
-        # self.wait_for_input()
         self._root.mainloop()
 
 
@@ -118,6 +117,8 @@ class GUI:
             # Run program
             while self._machine.is_running():
                 self._machine.tick()
+                if self._machine.get_needs_input() >= 0:
+                    self.wait_for_input()
         self.print_to_output(captured_output.getvalue(), '')
         self.print_to_output("Program ended.")
         # Reset the accumulator and program counter
@@ -138,10 +139,26 @@ class GUI:
 
 
     def wait_for_input(self):
-        print("Awaiting Input")
-        self._input_button.wait_variable(self._input_value)
-        print("Input was " + self._input_value.get())
-        self._input_value = ''
+        # Wait for input
+        while True:
+            self.print_to_output(f"Awaiting input for memory location {self._machine.get_needs_input()}...")
+            self._input_button.wait_variable(self._input_value)
+            word = self._input_value.get()
+            # Reset for next input
+            self._input_entry.delete(0, tk.END)
+            self._input_value = tk.StringVar()
+            # Validate Input
+            validator = Input()
+            validator.validate_input(word)
+            if not validator.get_validity():
+                self.print_to_output("Error: Input must be a 4-digit number. Please try again.")
+                continue
+            # Store input
+            word = int(word)
+            self._machine.set_memory_at_address(self._machine.get_needs_input(), word)
+            self.print_to_output(f"{format_word(word)} was stored at memory address {self._machine.get_needs_input()}.")
+            self.update_memory_labels()
+            break
 
 
 def main():
@@ -150,6 +167,7 @@ def main():
     memory = [1102, 4300, 1234]
     machine = Machine(memory)
     gui = GUI(machine)
+    gui.make_window()
 
 if __name__ == "__main__":
     main()

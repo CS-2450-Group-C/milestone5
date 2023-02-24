@@ -1,6 +1,8 @@
 
 def format_word(word):
     """Convert int to a string with format (+/-)1234"""
+    if isinstance(word, str):
+        word = int(word)
     output = str(abs(word))
 
     # Pad the number with zeroes until there are four digits

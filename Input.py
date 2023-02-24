@@ -4,7 +4,7 @@ class Input:
     def __init__(self):
         "Constructor for Input. Creates two attributes, _validity and _default_message"
         self._validity = False
-        self._default_message = "Enter a new four-digit word to store in memory. Ex: +2156, -4328: "
+        self._default_message = "Type input: "
 
 
     def get_validity(self):
@@ -20,7 +20,7 @@ class Input:
     def validate_input(self, input):
         """Uses a RegEx to check if an input is a valid word"""
         
-        regex = re.search("^\s*((\+|-|)(\d+)|)\s*$", input)
+        regex = re.search("^\s*((\+|-|)(\d{1,4}))\s*$", input)
         # Valid Input
         if regex:
             self.set_validity(True)
@@ -37,7 +37,7 @@ class Input:
 
         return False
             
-
+    # Note: currently used only for command line input.
     def get_input(self):
         """Method for getting input from the user. Validates
         the input then returns a string"""
@@ -56,7 +56,7 @@ class Input:
 
             # Ask the user for valid input again
             if not self.get_validity():
-                print(f"'{new_word}' is not a valid word. Type 'exit' to exit.")
+                print("Error: Input must be a 4-digit number. Please try again.")
 
         return new_word
 
