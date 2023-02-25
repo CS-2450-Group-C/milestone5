@@ -27,17 +27,17 @@ class GUI:
         ## Memory widget 
         # Create container to keep at left side of window
         mem_container = tk.Frame(self._root)
-        mem_container.grid(row=0, column=0)
+        mem_container.grid(row=0, column=0, padx=(20, 0))
         # Create frame for memory
         mem_frame = tk.Frame(mem_container)
         mem_frame.grid(row=0, column=0, pady=5, sticky=tk.NW)
         mem_frame.grid_rowconfigure(1, weight=1)
         mem_frame.grid_columnconfigure(0, weight=1)
         mem_frame.grid_propagate(False)
-        mem_frame.config(width=175, height=485)
+        mem_frame.config(width=250, height=580)
         # Create label
         label = tk.Label(mem_frame, text="Memory")
-        label.grid(row=0, column=0, sticky=tk.EW)
+        label.grid(row=0, column=0, sticky=tk.NW)
         # Create canvas for scrolling
         mem_canvas = tk.Canvas(mem_frame, bg="lightgrey")
         mem_canvas.grid(row=1, column=0, sticky=tk.NSEW)
@@ -63,30 +63,84 @@ class GUI:
         mem_canvas.config(scrollregion=mem_canvas.bbox("all"))
 
         ## Buttons, input, output
+        default_left_padding = (30, 0)
+        default_vert_padding = (20, 0)
         # Create container to keep at the right side of window
-        general_container = tk.Frame(self._root, bg="orange")
+        general_container = tk.Frame(self._root, bg="#006080")
         general_container.grid(row=0, column=1, sticky=tk.NS)
         # Create import button
-        import_button = tk.Button(general_container, bg="green", text ="Import", command=self.import_memory)
-        import_button.grid(row=0, column=0, sticky=tk.W)
+        import_button = tk.Button(
+            general_container, 
+            bg="#0099CC", 
+            text ="Import", 
+            command=self.import_memory,
+            width=15,
+            height=3)
+        import_button.grid(
+            row=0, 
+            column=0, 
+            padx=default_left_padding, 
+            pady=default_vert_padding, 
+            sticky=tk.W)
         # Create run button
-        run_button = tk.Button(general_container, bg="green", text="Run", command=self.run)
-        run_button.grid(row=1, column=0, sticky=tk.W)
+        run_button = tk.Button(
+            general_container, 
+            bg="#0099CC", 
+            text="Run", 
+            command=self.run,
+            width=15,
+            height=3)
+        run_button.grid(
+            row=1, 
+            column=0, 
+            padx=default_left_padding, 
+            pady=default_vert_padding, 
+            sticky=tk.W)
+        
         # Create Input Entry
-        input_label = tk.Label(general_container, text="Input")
-        input_label.grid(row=2, column=0, sticky=tk.W)
-        input_entry = tk.Entry(general_container)
-        input_entry.grid(row=3, column=0, sticky=tk.W)
+        input_container = tk.Frame(general_container, bg="#006080")
+        input_container.grid(
+            row=2, 
+            column=0,
+            pady=default_vert_padding, 
+            sticky=tk.W)
+        input_label = tk.Label(input_container, text="Input")
+        input_label.grid(
+            row=2, 
+            column=0, 
+            padx=default_left_padding,
+            pady=default_vert_padding, 
+            sticky=tk.W)
+        input_entry = tk.Entry(input_container, width=30)
+        input_entry.grid(
+            row=3, 
+            column=0, 
+            padx=default_left_padding, 
+            sticky=tk.W)
         self._input_entry = input_entry
         self._input_value = tk.StringVar()
-        input_button = tk.Button(general_container, bg="green", text="Enter", command=lambda: self._input_value.set(self._input_entry.get()))
-        input_button.grid(row=4, column=0, sticky=tk.W)
+        
+        # Input button (Enter)
+        input_button = tk.Button(
+            input_container, 
+            bg="#0099CC", text="Enter", 
+            command=lambda: self._input_value.set(self._input_entry.get()))
+        input_button.grid(
+            row=3, 
+            column=1,
+            padx=(15, 0))
         self._input_button = input_button
+        
         # Create output console
         output_label = tk.Label(general_container, text="Output")
-        output_label.grid(row=5, column=0, sticky=tk.W)
+        output_label.grid(
+            row=5, 
+            column=0,
+            padx=default_left_padding,
+            pady=default_vert_padding, 
+            sticky=tk.W)
         self._output = tk.Text(general_container)
-        self._output.grid(row=6, column=0, sticky=tk.W)
+        self._output.grid(row=6, column=0, pady=(0, 30), padx=(30, 15), sticky=tk.W)
         self._output.config(state=tk.DISABLED)
         self.print_to_output("Welcome to the UVSim")
 
