@@ -31,7 +31,19 @@ A 4-digit word can be an instruction. The two rightmost digits indicate the spec
 * HALT = 43 Pause the program
 
 ## How to use
-The UVSim can load 4-digit words from a __.txt__ file into memory, starting at address 00. Ensure all files are downloaded into the same directory. From that directory, call ___python main.py fileName.txt___
+### Command-line interface (CLI)
+The UVSim can load 4-digit words from a `.txt` file into memory, starting at address 00. Ensure all files are downloaded into the same directory. From that directory, call `python3 main.py fileName.txt`
+
+### Graphical user interface (GUI)
+Start the UVSim GUI by running `python3 main.py` without any arguments.
+
+To import a program to run, click on the __import__ button. The UVSim can load 4-digit words from a `.txt` file into memory, starting at address 00.
+
+To start the program, click __run__. The table on the left of the interface shows the current memory of the machine and will update as the machine runs if the program modifies the memory. The large output box on the bottom of the interface logs the output of UVSim and can be a useful resource for debugging a non-working program.
+
+When the running program expects an input, it will say so in the output box and will pause execution until a valid 4-digit number is entered into the input box and the __enter__ button is clicked.
+
+The program will run until it completes.
 
 ## Accepted 4-digit Word Formats
 <pre>+0123
