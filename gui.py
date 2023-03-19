@@ -4,6 +4,7 @@ from Input import Input
 from formatWord import format_word
 import tkinter as tk
 from tkinter import filedialog
+from tkinter import colorchooser
 import contextlib
 import io
 
@@ -11,11 +12,16 @@ class GUI:
     def __init__(self, machine=Machine()):
         self._machine = machine
         self._root = None
+        self._color_window = None
         self._mem_labels = []
         self._output = None
         self._input_entry = None
         self._input_button = None
         self._input_value = None
+        self._colors = {
+            "main" : "#FFFFFF",
+            "accent" : "#FFFFFF"
+        }
     
     def make_window(self):
         """Creates the window and adds all elements."""
@@ -89,7 +95,7 @@ class GUI:
             text="Color",
             fg=text_color,
             # TODO: Change the command to the color picker
-            command=self.run,
+            command=self.open_color_menu,
             width=10,
             height=3)
         color_button.grid(
@@ -373,6 +379,40 @@ class GUI:
             self.print_to_output(f"{format_word(word)} was stored at memory address {self._machine.get_needs_input()}.")
             self.update_memory_labels()
             break
+
+    def open_color_menu(self):
+        # Ensure color picker window doesn't exist
+        if self._color_window is None or not tk.Toplevel.winfo_exists(self._color_window):
+            # Make new window
+            self._color_window = tk.Toplevel(self._root)
+            self._color_window.title("Color Picker")
+            self._color_window.geometry("300x150")
+        
+            # Add color picker buttons
+            tk.Label(self._color_window,
+                text="Main Color").pack()
+            tk.Button(self._color_window, 
+                text="Pick Main Color",
+                command=lambda: self.change_color("main")).pack()
+            tk.Label(self._color_window,
+                text="Accent Color").pack()
+            tk.Button(self._color_window, 
+                text="Pick Accent Color",
+                command=lambda: self.change_color("accent")).pack()
+        else:
+            # Bring prexisting color picker window to the front
+            self._color_window.lift()
+
+
+    def change_color(self, key):
+        selectedColor = "#FFFFFF"
+        selectedColor = colorchooser.askcolor()[1]
+        self._color_window.lift()
+        
+        if selectedColor is not None:
+            self._colors[key] = selectedColor
+        print("Main color is " + self._colors["main"])
+        print("Accent color is " + self._colors["accent"])
 
 
 def main():
