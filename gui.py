@@ -320,9 +320,9 @@ class GUI:
     def button_cut(self):
         # Calls button_copy, then clears memory entries by setting to +0.
         self.button_copy()
-        for i in self._word_entry_list:
-            i.delete(0, 5)
-            i.insert(0, "+0")
+        for i, _ in enumerate(self._gui_memory):
+            self._gui_memory[i] = 0
+        self.update_gui_from_mem()
     
     def button_paste(self, running_GUI_memory = False, GUI_memory = None):
         # Gets what is in paste entry box and puts into memory.
