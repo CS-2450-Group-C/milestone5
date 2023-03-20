@@ -308,6 +308,8 @@ class GUI:
     def final_stringer(self):
         # Loops through the GUI memory and creates a string containing the words in memory.
         final_string = ""
+        self.update_mem_from_gui() # sync-up before stringifying
+        self.update_gui_from_mem()
         for i in self._word_entry_list:
             final_string += i.get() + "\n"
         return final_string
@@ -353,23 +355,20 @@ class GUI:
     
     def button_save(self):
         # Save function, uses save as function if there is no file that has been imported or saved as.
-        if self._current_filepath is not None:
-            file = open(self._current_filepath, "w")
+        if not self._current_filepath:
+            self.button_save_as()
+            return
+        with open(self._current_filepath, "w", encoding="utf-8") as file:
             final_string = self.final_stringer()
             file.write(final_string)
-            file.close()
-        else:
-            self.button_save_as()
     
     def button_save_as(self):
         # Save as function.
         returned = asksaveasfile() 
-        if returned is None:
+        if not returned:
             return
-        final_string = self.final_stringer()
-        returned.write(final_string)
-        returned.close()
-        self._current_filepath = returned
+        self._current_filepath = returned.name
+        self.button_save()
     
     def import_memory(self):
         """Import memory from a given file."""
