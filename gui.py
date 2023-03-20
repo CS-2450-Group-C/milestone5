@@ -1,8 +1,3 @@
-from uvsim import Machine
-from Parser import Parser
-from Input import Input
-from memory import Memory
-from formatWord import format_word
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import colorchooser
@@ -10,7 +5,13 @@ from tkinter import Entry
 import contextlib
 import io
 import pyperclip
-from tkinter.filedialog import asksaveasfile
+from uvsim import Machine
+from Parser import Parser
+from Input import Input
+from memory import Memory
+from formatWord import format_word
+
+
 
 class GUI:
     def __init__(self):
@@ -365,7 +366,7 @@ class GUI:
     
     def button_save_as(self):
         # Save as function.
-        returned = asksaveasfile(filetypes = [("UVSIM program","*.txt")], defaultextension=".txt")
+        returned = filedialog.asksaveasfile(filetypes = [("UVSIM program","*.txt")], defaultextension=".txt")
         if not returned:
             return
         self._current_filepath = returned.name
