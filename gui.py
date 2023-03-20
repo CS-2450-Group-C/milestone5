@@ -398,7 +398,7 @@ class GUI:
      
     def update_gui_from_mem(self):
         for i, entry in enumerate(self._word_entry_list):
-            entry.delete(0, 5)
+            entry.delete(0, "end")
             if self._gui_memory[i] < 0:
                 entry.insert(0, f"{self._gui_memory[i]:05}")
             else:
@@ -406,7 +406,12 @@ class GUI:
 
     def update_mem_from_gui(self):
         for i, entry in enumerate(self._word_entry_list):
-            self._gui_memory[i] = int(entry.get())
+            entry.delete(5, "end") # chop off excessive characters
+            try:
+                self._gui_memory[i] = int(entry.get())
+            except ValueError:
+                self.print_to_output(f"Error: invalid entry at memory location {i}")
+                self._gui_memory[i] = 0
 
     def run(self):
         """Run the program."""
@@ -414,8 +419,8 @@ class GUI:
         # Takes the instructions in the GUI and passes it to paste.
         # Essentially automates clicking the copy button, pasting it in the paste entry, and clicking the paste button.
         # This ensures that changes made to the memory using the GUI actually occur.
-        current_GUI_memory = self.final_stringer()
-        self.button_paste(True, current_GUI_memory)
+        # current_GUI_memory = self.final_stringer()
+        # self.button_paste(True, current_GUI_memory)
         
         self.update_mem_from_gui()
         self._machine = Machine(self._gui_memory)
