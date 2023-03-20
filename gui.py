@@ -53,6 +53,7 @@ class GUI:
         self._root.grid_rowconfigure(0, weight=1)
         self._root.columnconfigure(0, weight=1)
         self._root.resizable(width=False, height=False)
+        self._root.title("UVSim")
         
         # Create container to keep at the right side of window
         general_container = tk.Frame(self._root, bg=background_color)
@@ -368,6 +369,7 @@ class GUI:
         if not returned:
             return
         self._current_filepath = returned.name
+        self._root.title(f"UVSim - {self._current_filepath}")
         self.button_save()
     
     def import_memory(self):
@@ -383,6 +385,7 @@ class GUI:
         self._gui_memory = memory
         self.print_to_output(f"File {self._root.filename.split('/')[-1]} was imported successfully")
         self._current_filepath = self._root.filename
+        self._root.title(f"UVSim - {self._current_filepath}")
         self.update_gui_from_mem()
      
     def update_gui_from_mem(self):
