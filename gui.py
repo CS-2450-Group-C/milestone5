@@ -364,7 +364,7 @@ class GUI:
     
     def button_save_as(self):
         # Save as function.
-        returned = asksaveasfile() 
+        returned = asksaveasfile(filetypes = [("UVSIM program","*.txt")], defaultextension=".txt")
         if not returned:
             return
         self._current_filepath = returned.name
