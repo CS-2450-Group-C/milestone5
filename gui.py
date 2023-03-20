@@ -5,8 +5,11 @@ from formatWord import format_word
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import colorchooser
+from tkinter import Entry
 import contextlib
 import io
+import pyperclip
+from tkinter.filedialog import asksaveasfile
 
 class GUI:
     def __init__(self, machine=Machine()):
@@ -22,6 +25,9 @@ class GUI:
             "main" : "#FFFFFF",
             "accent" : "#FFFFFF"
         }
+        self._paste_entry = None
+        self._word_entry_list = []
+        self._current_filepath = None
     
     def make_window(self):
         """Creates the window and adds all elements."""
@@ -222,14 +228,17 @@ class GUI:
         mem_canvas.create_window((0, 0), window=mem_grid, anchor=tk.NW)
         # Create memory location labels and word entry to place into grid
         mem = self._machine.get_memory()
-        self._mem_labels 
+        paste_label = tk.Label(mem_grid, text="Paste:")
+        paste_label.grid(row=0, column=0, stick=tk.W, padx=2, pady=2)
+        self._paste_entry = Entry(mem_grid)
+        self._paste_entry.grid(row=0, column=1, stick=tk.W, padx=2, pady=2)
         for loc, word in enumerate(mem):
             location_label = tk.Label(mem_grid, text=loc)
-            word_entry = tk.Label(mem_grid, width=5)
-            location_label.grid(row=loc, column=0, sticky=tk.E, padx=2, pady=2)
-            word_entry.grid(row=loc, column=1, stick=tk.W, padx=2, pady=2)
-            self._mem_labels.append(word_entry)
-        self.update_memory_labels()
+            word_entry = tk.Entry(mem_grid)
+            location_label.grid(row=loc + 1, column=0, sticky=tk.E, padx=2, pady=2)
+            word_entry.grid(row=loc + 1, column=1, stick=tk.W, padx=2, pady=2)
+            word_entry.insert(0, "+" + str(word))
+            self._word_entry_list.append(word_entry)
         # Reconfigure for scrolling
         mem_grid.update_idletasks()
         mem_canvas.config(scrollregion=mem_canvas.bbox("all"))
@@ -245,8 +254,7 @@ class GUI:
             fg=text_color,
             height=small_button_height,
             width=small_button_width,
-            # TODO: Implement copy functionality
-            command=lambda: self._input_value.set(self._input_entry.get()))
+            command=self.button_copy)
         copy_button.grid(
             row=0, 
             column=0,
@@ -259,8 +267,7 @@ class GUI:
             fg=text_color,
             height=small_button_height,
             width=small_button_width,
-            # TODO: Implement cut functionality
-            command=lambda: self._input_value.set(self._input_entry.get()))
+            command=self.button_cut)
         cut_button.grid(
             row=0, 
             column=1,
@@ -273,8 +280,7 @@ class GUI:
             fg=text_color,
             height=small_button_height,
             width=small_button_width,
-            # TODO: Implement paste functionality
-            command=lambda: self._input_value.set(self._input_entry.get()))
+            command=self.button_paste)
         paste_button.grid(
             row=0, 
             column=2,
@@ -287,23 +293,21 @@ class GUI:
             fg=text_color,
             height=small_button_height,
             width=small_button_width,
-            # TODO: Implement save functionality
-            command=lambda: self._input_value.set(self._input_entry.get()))
+            command=self.button_save)
         save_button.grid(
             row=1, 
             column=0,
             padx=mem_button_padding,
             sticky=tk.W)
         
-        # Save button
+        # Save As button
         save_as_button = tk.Button(
             mem_buttons_container, 
             bg=default_button_color, text="Save As",
             fg=text_color,
             height=small_button_height,
             width=small_button_width,
-            # TODO: Implement save as functionality
-            command=lambda: self._input_value.set(self._input_entry.get()))
+            command=self.button_save_as)
         save_as_button.grid(
             row=1, 
             column=1,
@@ -311,8 +315,70 @@ class GUI:
             sticky=tk.W)
 
         self._root.mainloop()
-
-
+    
+    def final_stringer(self):
+        # Loops through the GUI memory and creates a string containing the words in memory.
+        final_string = ""
+        for i in self._word_entry_list:
+            final_string += i.get() + "\n"
+        return final_string
+    
+    def button_copy(self):
+        # Uses pyperclip to copy final_string to clipboard.
+        final_string = self.final_stringer()
+        pyperclip.copy(final_string)
+    
+    def button_cut(self):
+        # Calls button_copy, then clears memory entries by setting to +0.
+        self.button_copy()
+        for i in self._word_entry_list:
+            i.delete(0, 5)
+            i.insert(0, "+0")
+    
+    def button_paste(self, running_GUI_memory = False, GUI_memory = None):
+        # Gets what is in paste entry box and puts into memory.
+        # Running GUI memory is to be set to True when this function is used in the run() function.
+        if running_GUI_memory:
+            paste_contents = GUI_memory
+        else:
+            paste_contents = self._paste_entry.get()
+        paste_content_lines = []
+        new_memory = []
+        j = 0
+        for i in paste_contents.splitlines():
+            paste_content_lines.append(i)
+            new_memory.append(int(i))
+        if len(paste_content_lines) > 100:
+            raise Exception("Pasted memory is longer than 100 lines.")
+        for i in self._word_entry_list:
+            i.delete(0, 5)
+            if j < len(paste_content_lines):
+                i.insert(0, paste_content_lines[j])
+            else:
+                i.insert(0, "+0")
+            j += 1
+        self._machine = Machine(new_memory)
+    
+    def button_save(self):
+        # Save function, uses save as function if there is no file that has been imported or saved as.
+        if self._current_filepath is not None:
+            file = open(self._current_filepath, "w")
+            final_string = self.final_stringer()
+            file.write(final_string)
+            file.close()
+        else:
+            self.button_save_as()
+    
+    def button_save_as(self):
+        # Save as function.
+        returned = asksaveasfile() 
+        if returned is None:
+            return
+        final_string = self.final_stringer()
+        returned.write(final_string)
+        returned.close()
+        self._current_filepath = returned
+    
     def import_memory(self):
         """Import memory from a given file."""
         self._root.filename = filedialog.askopenfilename(initialdir="./", title="Select a text file containing BasicML code", filetypes=(('text files', '.txt'),))
@@ -324,12 +390,31 @@ class GUI:
             self.print_to_output(str(ex))
             return
         self._machine = Machine(memory)
-        self.update_memory_labels()
         self.print_to_output(f"File {self._root.filename.split('/')[-1]} was imported successfully")
-
+        self._current_filepath = self._root.filename
+        
+        # Updated to work with tk entries instead of labels.
+        memory_list = []
+        for i in memory:
+            memory_list.append("+" + str(i))
+        j = 0
+        for i in self._word_entry_list:
+            i.delete(0, 5)
+            if j < len(memory_list):
+                i.insert(0, memory_list[j])
+            else:
+                i.insert(0, "+0")
+            j += 1
 
     def run(self):
         """Run the program."""
+        
+        # Takes the instructions in the GUI and passes it to paste.
+        # Essentially automates clicking the copy button, pasting it in the paste entry, and clicking the paste button.
+        # This ensures that changes made to the memory using the GUI actually occur.
+        current_GUI_memory = self.final_stringer()
+        self.button_paste(True, current_GUI_memory)
+        
         self.print_to_output("Program starting...")
         # Capture terminal output
         captured_output = io.StringIO()
@@ -344,19 +429,10 @@ class GUI:
         # Reset the accumulator and program counter
         self._machine.reset()
 
-
-    def update_memory_labels(self):
-        """Sets the GUI labels with words from memory machine."""
-        mem = self._machine.get_memory()
-        for loc, word in enumerate(mem):
-            self._mem_labels[loc].config(text=format_word(word))
-
-
     def print_to_output(self, text, end="\n"):
         self._output.config(state=tk.NORMAL)
         self._output.insert(tk.END, text + end)
         self._output.config(state=tk.DISABLED)
-
 
     def wait_for_input(self):
         # Wait for input
@@ -413,7 +489,6 @@ class GUI:
             self._colors[key] = selectedColor
         print("Main color is " + self._colors["main"])
         print("Accent color is " + self._colors["accent"])
-
 
 def main():
     """For testing purposes only."""
