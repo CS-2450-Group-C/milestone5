@@ -1,6 +1,7 @@
 from uvsim import Machine
 from Parser import Parser
 from Input import Input
+from memory import Memory
 from formatWord import format_word
 import tkinter as tk
 from tkinter import filedialog
@@ -12,8 +13,8 @@ import pyperclip
 from tkinter.filedialog import asksaveasfile
 
 class GUI:
-    def __init__(self, machine=Machine()):
-        self._machine = machine
+    def __init__(self):
+        self._machine = None
         self._root = None
         self._color_window = None
         self._mem_labels = []
@@ -28,6 +29,7 @@ class GUI:
         self._paste_entry = None
         self._word_entry_list = []
         self._current_filepath = None
+        self._gui_memory = Memory()
     
     def make_window(self):
         """Creates the window and adds all elements."""
@@ -227,7 +229,7 @@ class GUI:
         mem_grid = tk.Frame(mem_canvas, bg=output_background_color)
         mem_canvas.create_window((0, 0), window=mem_grid, anchor=tk.NW)
         # Create memory location labels and word entry to place into grid
-        mem = self._machine.get_memory()
+        mem = self._gui_memory
         paste_label = tk.Label(mem_grid, text="Paste:")
         paste_label.grid(row=0, column=0, stick=tk.W, padx=2, pady=2)
         self._paste_entry = Entry(mem_grid)
@@ -350,14 +352,17 @@ class GUI:
             new_memory.append(int(i))
         if len(paste_content_lines) > 100:
             raise Exception("Pasted memory is longer than 100 lines.")
-        for i in self._word_entry_list:
-            i.delete(0, 5)
-            if j < len(paste_content_lines):
-                i.insert(0, paste_content_lines[j])
-            else:
-                i.insert(0, "+0")
-            j += 1
-        self._machine = Machine(new_memory)
+        for i, word in enumerate(new_memory):
+            self._gui_memory[i] = word
+        self.update_gui_from_mem()
+        # for i in self._word_entry_list:
+        #     i.delete(0, 5)
+        #     if j < len(paste_content_lines):
+        #         i.insert(0, paste_content_lines[j])
+        #     else:
+        #         i.insert(0, "+0")
+        #     j += 1
+        # self._machine = Machine(new_memory)
     
     def button_save(self):
         # Save function, uses save as function if there is no file that has been imported or saved as.
@@ -389,22 +394,22 @@ class GUI:
             self.print_to_output(f"Error: File {self._root.filename.split('/')[-1]} is not formatted properly")
             self.print_to_output(str(ex))
             return
-        self._machine = Machine(memory)
+        self._gui_memory = memory
         self.print_to_output(f"File {self._root.filename.split('/')[-1]} was imported successfully")
         self._current_filepath = self._root.filename
-        
-        # Updated to work with tk entries instead of labels.
-        memory_list = []
-        for i in memory:
-            memory_list.append("+" + str(i))
-        j = 0
-        for i in self._word_entry_list:
-            i.delete(0, 5)
-            if j < len(memory_list):
-                i.insert(0, memory_list[j])
+        self.update_gui_from_mem()
+     
+    def update_gui_from_mem(self):
+        for i, entry in enumerate(self._word_entry_list):
+            entry.delete(0, 5)
+            if self._gui_memory[i]:
+                entry.insert(0, str(self._gui_memory[i]))
             else:
-                i.insert(0, "+0")
-            j += 1
+                entry.insert(0, "+0")
+
+    def update_mem_from_gui(self):
+        for i, entry in enumerate(self._word_entry_list):
+            self._gui_memory[i] = int(entry.get())
 
     def run(self):
         """Run the program."""
@@ -415,6 +420,9 @@ class GUI:
         current_GUI_memory = self.final_stringer()
         self.button_paste(True, current_GUI_memory)
         
+        self.update_mem_from_gui()
+        self._machine = Machine(self._gui_memory)
+
         self.print_to_output("Program starting...")
         # Capture terminal output
         captured_output = io.StringIO()
@@ -424,10 +432,12 @@ class GUI:
                 self._machine.tick()
                 if self._machine.get_needs_input() >= 0:
                     self.wait_for_input()
+                self._gui_memory = self._machine.get_memory()
+                self.update_gui_from_mem()
         self.print_to_output(captured_output.getvalue(), '')
         self.print_to_output("Program ended.")
         # Reset the accumulator and program counter
-        self._machine.reset()
+        del self._machine
 
     def print_to_output(self, text, end="\n"):
         self._output.config(state=tk.NORMAL)
@@ -453,7 +463,6 @@ class GUI:
             word = int(word)
             self._machine.set_memory_at_address(self._machine.get_needs_input(), word)
             self.print_to_output(f"{format_word(word)} was stored at memory address {self._machine.get_needs_input()}.")
-            self.update_memory_labels()
             break
 
     def open_color_menu(self):
@@ -495,7 +504,7 @@ def main():
     # Prints 1234 when run
     memory = [1102, 4300, 1234]
     machine = Machine(memory)
-    gui = GUI(machine)
+    gui = GUI()
     gui.make_window()
 
 if __name__ == "__main__":
