@@ -65,15 +65,14 @@ class GUI:
             column=0,
             sticky=tk.W
         )
-        import_button = tk.Button(
+        tk.Button(
             action_button_container, 
             bg=default_button_color, 
             text ="Import",
             fg=text_color, 
             command=self.import_memory,
             width=15,
-            height=3)
-        import_button.grid(
+            height=3).grid(
             row=0, 
             column=0, 
             padx=default_left_padding, 
@@ -81,15 +80,14 @@ class GUI:
             sticky=tk.W)
         
         # Create run button
-        run_button = tk.Button(
+        tk.Button(
             action_button_container, 
             bg=default_button_color, 
             text="Run",
             fg=text_color,
             command=self.run,
             width=15,
-            height=3)
-        run_button.grid(
+            height=3).grid(
             row=0, 
             column=1, 
             padx=default_left_padding, 
@@ -97,7 +95,7 @@ class GUI:
             sticky=tk.W)
         
         # Create color button
-        color_button = tk.Button(
+        tk.Button(
             action_button_container, 
             bg=default_button_color, 
             text="Color",
@@ -105,8 +103,7 @@ class GUI:
             # TODO: Change the command to the color picker
             command=self.open_color_menu,
             width=10,
-            height=3)
-        color_button.grid(
+            height=3).grid(
             row=0, 
             column=2, 
             padx=default_left_padding, 
@@ -184,20 +181,18 @@ class GUI:
         self.print_to_output("Welcome to the UVSim")
 
         # Clear console button
-        clear_button = tk.Button(
+        tk.Button(
             console_container, 
             bg=default_button_color, text="Clear",
             fg=text_color,
             height=small_button_height,
             width=small_button_width,
-            command=lambda: self._input_value.set(self._input_entry.get()))
-        clear_button.grid(
-            row=2, 
+            command=lambda: self._input_value.set(self._input_entry.get())).grid(
+            row=2,
             column=0,
             padx=(0,15),
             pady=(5,0),
             sticky=tk.E)
-        self._input_button = input_button
 
         ## Memory widget 
         # Create container to keep at left side of window
@@ -247,67 +242,62 @@ class GUI:
         mem_buttons_container.grid(row=1, column=0, pady=(0,5), sticky=tk.NW)
 
         # Copy button
-        copy_button = tk.Button(
+        tk.Button(
             mem_buttons_container, 
             bg=default_button_color, text="Copy",
             fg=text_color,
             height=small_button_height,
             width=small_button_width,
-            command=self.button_copy)
-        copy_button.grid(
+            command=self.button_copy).grid(
             row=0, 
             column=0,
             padx=mem_button_padding)
         
         # Cut button
-        cut_button = tk.Button(
+        tk.Button(
             mem_buttons_container, 
             bg=default_button_color, text="Cut",
             fg=text_color,
             height=small_button_height,
             width=small_button_width,
-            command=self.button_cut)
-        cut_button.grid(
+            command=self.button_cut).grid(
             row=0, 
             column=1,
             padx=mem_button_padding)
         
         # Paste button
-        paste_button = tk.Button(
+        tk.Button(
             mem_buttons_container, 
             bg=default_button_color, text="Paste",
             fg=text_color,
             height=small_button_height,
             width=small_button_width,
-            command=self.button_paste)
-        paste_button.grid(
+            command=self.button_paste).grid(
             row=0, 
             column=2,
             padx=mem_button_padding)
         
         # Save button
-        save_button = tk.Button(
+        tk.Button(
             mem_buttons_container, 
             bg=default_button_color, text="Save",
             fg=text_color,
             height=small_button_height,
             width=small_button_width,
-            command=self.button_save)
-        save_button.grid(
+            command=self.button_save).grid(
             row=1, 
             column=0,
             padx=mem_button_padding,
             sticky=tk.W)
         
         # Save As button
-        save_as_button = tk.Button(
+        tk.Button(
             mem_buttons_container, 
             bg=default_button_color, text="Save As",
             fg=text_color,
             height=small_button_height,
             width=small_button_width,
-            command=self.button_save_as)
-        save_as_button.grid(
+            command=self.button_save_as).grid(
             row=1, 
             column=1,
             padx=mem_button_padding,
