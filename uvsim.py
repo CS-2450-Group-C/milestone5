@@ -1,6 +1,7 @@
 '''Module containing the Machine Class.'''
 
 # op imports
+from memory import Memory
 from inputoutput import InputOutput
 from arithmetic import Arithmetic
 from loadstore import LoadStore
@@ -22,10 +23,10 @@ class Machine:
 
     other methods are primarily used internally'''
 
-    def __init__(self, init_mem=[]):
+    def __init__(self, init_mem=Memory()):
         self._accumulator = 0
         self._program_counter = 0
-        self._memory = [0000] * 100
+        self._memory = Memory()
         self._running = True
         self._needs_input = -1
 
