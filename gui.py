@@ -229,18 +229,15 @@ class GUI:
         mem_grid = tk.Frame(mem_canvas, bg=output_background_color)
         mem_canvas.create_window((0, 0), window=mem_grid, anchor=tk.NW)
         # Create memory location labels and word entry to place into grid
-        mem = self._gui_memory
         paste_label = tk.Label(mem_grid, text="Paste:")
         paste_label.grid(row=0, column=0, stick=tk.W, padx=2, pady=2)
         self._paste_entry = Entry(mem_grid)
         self._paste_entry.grid(row=0, column=1, stick=tk.W, padx=2, pady=2)
-        for loc, word in enumerate(mem):
-            location_label = tk.Label(mem_grid, text=loc)
-            word_entry = tk.Entry(mem_grid)
-            location_label.grid(row=loc + 1, column=0, sticky=tk.E, padx=2, pady=2)
-            word_entry.grid(row=loc + 1, column=1, stick=tk.W, padx=2, pady=2)
-            word_entry.insert(0, "+" + str(word))
-            self._word_entry_list.append(word_entry)
+        for loc in range(100):
+            tk.Label(mem_grid, text=loc).grid(row=loc + 1, column=0, sticky=tk.E, padx=2, pady=2)
+            self._word_entry_list.append(tk.Entry(mem_grid))
+            self._word_entry_list[loc].grid(row=loc + 1, column=1, stick=tk.W, padx=2, pady=2)
+        self.update_gui_from_mem()
         # Reconfigure for scrolling
         mem_grid.update_idletasks()
         mem_canvas.config(scrollregion=mem_canvas.bbox("all"))
@@ -402,10 +399,10 @@ class GUI:
     def update_gui_from_mem(self):
         for i, entry in enumerate(self._word_entry_list):
             entry.delete(0, 5)
-            if self._gui_memory[i]:
-                entry.insert(0, str(self._gui_memory[i]))
+            if self._gui_memory[i] < 0:
+                entry.insert(0, f"{self._gui_memory[i]:05}")
             else:
-                entry.insert(0, "+0")
+                entry.insert(0, f"+{self._gui_memory[i]:04}")
 
     def update_mem_from_gui(self):
         for i, entry in enumerate(self._word_entry_list):
