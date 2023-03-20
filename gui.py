@@ -23,8 +23,8 @@ class GUI:
         self._input_button = None
         self._input_value = None
         self._colors = {
-            "main" : "#FFFFFF",
-            "accent" : "#FFFFFF"
+            "main" : "#4c721d",
+            "accent" : "#75af2d"
         }
         self._paste_entry = None
         self._word_entry_list = []
@@ -38,9 +38,9 @@ class GUI:
         default_left_padding = (30, 0)
         default_vert_padding = (20, 0)
         default_button_color = "#23350d"
-        background_color = "#4c721d"
+        background_color = self._colors["main"]
         text_color = "#FFF"
-        label_color = "#75af2d"
+        label_color = self._colors["accent"]
         input_background_color = "#FFF"
         output_background_color = "#FFF"
         mem_button_padding = (0, 10)
