@@ -24,7 +24,7 @@ class GUI:
         self._input_button = None
         self._input_value = None
         self._colors = {
-            "main" : "#4c721d",
+            "main" : "#8c721d",
             "accent" : "#75af2d"
         }
         self._paste_entry = None
@@ -38,10 +38,22 @@ class GUI:
         ## Standard variables
         default_left_padding = (30, 0)
         default_vert_padding = (20, 0)
-        default_button_color = "#23350d"
         background_color = self._colors["main"]
+        back_hex = int(background_color[1:], 16)
+        
+        # Calculate the color for the buttons using the background color
+        button_dif = 2702608
+        button_hex = back_hex - button_dif
+        button_color = str(hex(button_hex))[2:]
+        default_button_color = f"#{button_color}"
+        
+        # Calculate the color for the labels using the background color
+        label_dif = -2702608
+        label_hex = back_hex - label_dif
+        label_color = str(hex(label_hex))[2:]
+        label_color = f"#{label_color}"
+
         text_color = "#FFF"
-        label_color = self._colors["accent"]
         input_background_color = "#FFF"
         output_background_color = "#FFF"
         mem_button_padding = (0, 10)
@@ -183,13 +195,14 @@ class GUI:
         self.print_to_output("Welcome to the UVSim")
 
         # Clear console button
-        tk.Button(
+        clear_button = tk.Button(
             console_container, 
             bg=default_button_color, text="Clear",
             fg=text_color,
             height=small_button_height,
             width=small_button_width,
-            command=lambda: self._input_value.set(self._input_entry.get())).grid(
+            command=self.button_clear)
+        clear_button.grid(
             row=2,
             column=0,
             padx=(0,15),
@@ -200,6 +213,7 @@ class GUI:
         # Create container to keep at left side of window
         mem_container = tk.Frame(self._root, bg=background_color)
         mem_container.grid(row=0, column=1, padx=(20, 20))
+        
         # Create frame for memory
         mem_frame = tk.Frame(mem_container, bg=background_color)
         mem_frame.grid(row=0, column=0, pady=5, sticky=tk.NW)
@@ -207,24 +221,29 @@ class GUI:
         mem_frame.grid_columnconfigure(0, weight=1)
         mem_frame.grid_propagate(False)
         mem_frame.config(width=250, height=570)
+        
         # Create label
         label = tk.Label(
             mem_frame,
             bg=label_color,
             text="Memory")
         label.grid(row=0, column=0, sticky=tk.NW)
+        
         # Create canvas for scrolling
         mem_canvas = tk.Canvas(
             mem_frame, 
             bg=output_background_color)
         mem_canvas.grid(row=1, column=0, sticky=tk.NSEW)
+        
         # Create scrollbar for scrolling
         mem_scroll = tk.Scrollbar(mem_frame, orient=tk.VERTICAL, command=mem_canvas.yview)
         mem_scroll.grid(row=1, column=1, sticky=tk.NS)
         mem_canvas.configure(yscrollcommand=mem_scroll.set)
+        
         # Create frame for memory grid placement
         mem_grid = tk.Frame(mem_canvas, bg=output_background_color)
         mem_canvas.create_window((0, 0), window=mem_grid, anchor=tk.NW)
+        
         # Create memory location labels and word entry to place into grid
         paste_label = tk.Label(mem_grid, text="Paste:")
         paste_label.grid(row=0, column=0, stick=tk.W, padx=2, pady=2)
@@ -235,6 +254,7 @@ class GUI:
             self._word_entry_list.append(tk.Entry(mem_grid))
             self._word_entry_list[loc].grid(row=loc + 1, column=1, stick=tk.W, padx=2, pady=2)
         self.update_gui_from_mem()
+        
         # Reconfigure for scrolling
         mem_grid.update_idletasks()
         mem_canvas.config(scrollregion=mem_canvas.bbox("all"))
@@ -316,6 +336,17 @@ class GUI:
             final_string += i.get() + "\n"
         return final_string
     
+    def button_clear(self):
+        # Clears the contents of the console
+        self._output.config(state=tk.NORMAL)
+        
+        # Clear the console textbox
+        self._output.delete("1.0", tk.END)
+        
+        # Reinsert the welcome text
+        self._output.insert(tk.END,"Welcome to the UVSim\n")
+        self._output.config(state=tk.DISABLED)
+
     def button_copy(self):
         # Uses pyperclip to copy final_string to clipboard.
         final_string = self.final_stringer()
@@ -446,7 +477,7 @@ class GUI:
             self._input_button.wait_variable(self._input_value)
             word = self._input_value.get()
             # Reset for next input
-            self._input_entry.delete(0, tk.END)
+            self._input_entry.delete(0, self._output.END)
             self._input_value = tk.StringVar()
             # Validate Input
             validator = Input()
