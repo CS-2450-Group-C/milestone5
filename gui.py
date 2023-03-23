@@ -477,7 +477,7 @@ class GUI:
             self._input_button.wait_variable(self._input_value)
             word = self._input_value.get()
             # Reset for next input
-            self._input_entry.delete(0, self._output.END)
+            self._input_entry.delete(0, "end")
             self._input_value = tk.StringVar()
             # Validate Input
             validator = Input()
