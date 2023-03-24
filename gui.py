@@ -5,6 +5,8 @@ from tkinter import Entry
 import contextlib
 import io
 import pyperclip
+import json
+from pathlib import Path
 from uvsim import Machine
 from Parser import Parser
 from Input import Input
@@ -24,9 +26,10 @@ class GUI:
         self._input_button = None
         self._input_value = None
         self._colors = {
-            "main" : "#8c721d",
-            "accent" : "#75af2d"
+            "main" : "#4C721D",
+            "accent" : "#293714"
         }
+        self.read_colors()
         self._paste_entry = None
         self._word_entry_list = []
         self._current_filepath = None
@@ -39,20 +42,16 @@ class GUI:
         default_left_padding = (30, 0)
         default_vert_padding = (20, 0)
         background_color = self._colors["main"]
-        back_hex = int(background_color[1:], 16)
-        
-        # Calculate the color for the buttons using the background color
-        button_dif = 2702608
-        button_hex = back_hex - button_dif
-        button_color = str(hex(button_hex))[2:]
-        default_button_color = f"#{button_color}"
-        
-        # Calculate the color for the labels using the background color
-        label_dif = -2702608
-        label_hex = back_hex - label_dif
-        label_color = str(hex(label_hex))[2:]
-        label_color = f"#{label_color}"
+        default_button_color = self._colors["accent"]
 
+        # Calculate the color for the labels using the accent color
+        label_lighten_amount = 3
+        label_color = '#'
+        for val in self._colors["accent"][1:]:
+            val = min(int(val, 16) * label_lighten_amount, 15)
+            label_color += f"{val:x}"
+
+        # Additional variables
         text_color = "#FFF"
         input_background_color = "#FFF"
         output_background_color = "#FFF"
@@ -522,8 +521,22 @@ class GUI:
         
         if selectedColor is not None:
             self._colors[key] = selectedColor
-        print("Main color is " + self._colors["main"])
-        print("Accent color is " + self._colors["accent"])
+        self.write_colors()
+
+    
+    def read_colors(self):
+        if Path("colors.json").is_file():
+            with open("colors.json", 'r') as file:
+                self._colors = json.load(file)
+        else:
+            self.write_colors()
+
+
+    def write_colors(self):
+        with open("colors.json", 'w') as file:
+            json.dump(self._colors, file)
+
+
 
 def main():
     """For testing purposes only."""
