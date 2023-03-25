@@ -5,6 +5,7 @@
 - [Available Operations](#available-operations)
 - [How to use](#how-to-use)
 - [Accepted 4-digit Word Formats](#accepted-4-digit-word-formats)
+- [Program input](#
 
 ## What is it?
 The UVSim is a virtual machine that can interpret the machine language BasicML. It has a CPU, an accumulator, and main memory. The accumulator is register that can hold information to be opperated on. The main memory stores 100 instances of a 4-digit integer called a word. A word can either be a value or an instruction. Available instructions are listed below.
@@ -79,3 +80,6 @@ Users can modify the contents of BasicML programs using the UVSim's GUI memory e
 1           (Adds leading zeros 0001)
             (blank lines default to 0000)
 -99999      (Oversized words default to 0000)  </pre>
+
+## Program Input
+If a program that contains a user input instruction is run, the user can use the GUI to provide the input. To do so, run the said program using the Run button. When the program gets to the user input instruction, then a message will appear in the output text box stating that the program is waiting for input, to provide the input, type it into the Input textbox and click the Enter button.
