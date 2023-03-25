@@ -95,6 +95,10 @@ def test_read():
     with mock.patch.object(builtins, 'input', lambda _: '-1234'):
         while machine.is_running():
             machine.tick()
+            if machine.get_needs_input() > -1:
+                input = Input()
+                word = input.get_input()
+                machine.set_memory_at_address(machine.get_needs_input(), int(word))
     assert machine._memory[2] == -1234
     
     # Test unsigned number
@@ -103,6 +107,10 @@ def test_read():
     with mock.patch.object(builtins, 'input', lambda _: '1234'):
         while machine.is_running():
             machine.tick()
+            if machine.get_needs_input() > -1:
+                input = Input()
+                word = input.get_input()
+                machine.set_memory_at_address(machine.get_needs_input(), int(word))
     assert machine._memory[2] == 1234
 
 def test_write(capfd):
