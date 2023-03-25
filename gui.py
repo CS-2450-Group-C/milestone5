@@ -549,7 +549,7 @@ class GUI:
 
     def set_color(self, key):
         selectedColor = "#FFFFFF"
-        selectedColor = colorchooser.askcolor()[1]
+        selectedColor = colorchooser.askcolor(color=self._colors[key])[1]
         self._color_window.lift()
 
         if selectedColor is not None:
