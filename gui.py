@@ -12,7 +12,7 @@ from Parser import Parser
 from Input import Input
 from memory import Memory
 from formatWord import format_word
-
+from colorOperations import lighten_color, get_contrasting_text
 
 
 class GUI:
@@ -20,15 +20,12 @@ class GUI:
         self._machine = None
         self._root = None
         self._color_window = None
-        self._mem_labels = []
         self._output = None
         self._input_entry = None
         self._input_button = None
         self._input_value = None
-        self._colors = {
-            "main" : "#4C721D",
-            "accent" : "#293714"
-        }
+        self._colors = None
+        self.set_default_colors()
         self.read_colors()
         self._paste_entry = None
         self._word_entry_list = []
@@ -44,15 +41,11 @@ class GUI:
         background_color = self._colors["main"]
         default_button_color = self._colors["accent"]
 
-        # Calculate the color for the labels using the accent color
-        label_lighten_amount = 3
-        label_color = '#'
-        for val in self._colors["accent"][1:]:
-            val = min(int(val, 16) * label_lighten_amount, 15)
-            label_color += f"{val:x}"
+        label_color = lighten_color(self._colors["accent"])
+        button_text_color = get_contrasting_text(self._colors["accent"])
+        label_text_color = get_contrasting_text(label_color)
 
         # Additional variables
-        text_color = "#FFF"
         input_background_color = "#FFF"
         output_background_color = "#FFF"
         mem_button_padding = (0, 10)
@@ -82,7 +75,7 @@ class GUI:
             action_button_container, 
             bg=default_button_color, 
             text ="Import",
-            fg=text_color, 
+            fg=button_text_color, 
             command=self.import_memory,
             width=15,
             height=3).grid(
@@ -97,7 +90,7 @@ class GUI:
             action_button_container, 
             bg=default_button_color, 
             text="Run",
-            fg=text_color,
+            fg=button_text_color,
             command=self.run,
             width=15,
             height=3).grid(
@@ -112,7 +105,7 @@ class GUI:
             action_button_container, 
             bg=default_button_color, 
             text="Color",
-            fg=text_color,
+            fg=button_text_color,
             # TODO: Change the command to the color picker
             command=self.open_color_menu,
             width=10,
@@ -133,6 +126,7 @@ class GUI:
         input_label = tk.Label(
             input_container, 
             text="Input",
+            fg=label_text_color,
             bg=label_color)
         input_label.grid(
             row=2, 
@@ -156,7 +150,7 @@ class GUI:
         input_button = tk.Button(
             input_container, 
             bg=default_button_color, text="Enter",
-            fg=text_color,
+            fg=button_text_color,
             height=small_button_height,
             width=small_button_width,
             command=lambda: self._input_value.set(self._input_entry.get()))
@@ -178,6 +172,7 @@ class GUI:
         # Create output console
         output_label = tk.Label(
             console_container,
+            fg=label_text_color,
             bg=label_color,
             text="Output")
         output_label.grid(
@@ -197,7 +192,7 @@ class GUI:
         clear_button = tk.Button(
             console_container, 
             bg=default_button_color, text="Clear",
-            fg=text_color,
+            fg=button_text_color,
             height=small_button_height,
             width=small_button_width,
             command=self.button_clear)
@@ -224,6 +219,7 @@ class GUI:
         # Create label
         label = tk.Label(
             mem_frame,
+            fg=label_text_color,
             bg=label_color,
             text="Memory")
         label.grid(row=0, column=0, sticky=tk.NW)
@@ -248,6 +244,7 @@ class GUI:
         paste_label.grid(row=0, column=0, stick=tk.W, padx=2, pady=2)
         self._paste_entry = Entry(mem_grid)
         self._paste_entry.grid(row=0, column=1, stick=tk.W, padx=2, pady=2)
+        self._word_entry_list = []
         for loc in range(100):
             tk.Label(mem_grid, text=loc).grid(row=loc + 1, column=0, sticky=tk.E, padx=2, pady=2)
             self._word_entry_list.append(tk.Entry(mem_grid))
@@ -266,7 +263,7 @@ class GUI:
         tk.Button(
             mem_buttons_container, 
             bg=default_button_color, text="Copy",
-            fg=text_color,
+            fg=button_text_color,
             height=small_button_height,
             width=small_button_width,
             command=self.button_copy).grid(
@@ -278,7 +275,7 @@ class GUI:
         tk.Button(
             mem_buttons_container, 
             bg=default_button_color, text="Cut",
-            fg=text_color,
+            fg=button_text_color,
             height=small_button_height,
             width=small_button_width,
             command=self.button_cut).grid(
@@ -290,7 +287,7 @@ class GUI:
         tk.Button(
             mem_buttons_container, 
             bg=default_button_color, text="Paste",
-            fg=text_color,
+            fg=button_text_color,
             height=small_button_height,
             width=small_button_width,
             command=self.button_paste).grid(
@@ -302,7 +299,7 @@ class GUI:
         tk.Button(
             mem_buttons_container, 
             bg=default_button_color, text="Save",
-            fg=text_color,
+            fg=button_text_color,
             height=small_button_height,
             width=small_button_width,
             command=self.button_save).grid(
@@ -315,7 +312,7 @@ class GUI:
         tk.Button(
             mem_buttons_container, 
             bg=default_button_color, text="Save As",
-            fg=text_color,
+            fg=button_text_color,
             height=small_button_height,
             width=small_button_width,
             command=self.button_save_as).grid(
@@ -490,40 +487,100 @@ class GUI:
             self.print_to_output(f"{format_word(word)} was stored at memory address {self._machine.get_needs_input()}.")
             break
 
+
     def open_color_menu(self):
         # Ensure color picker window doesn't exist
         if self._color_window is None or not tk.Toplevel.winfo_exists(self._color_window):
             # Make new window
             self._color_window = tk.Toplevel(self._root)
             self._color_window.title("Color Picker")
-            self._color_window.geometry("300x150")
+            self._color_window.geometry("300x250+50+50")
+            self._color_window.configure(bg=self._colors["main"])
+
+            # Set color alts
+            label_color = lighten_color(self._colors["accent"])
+            button_text_color = get_contrasting_text(self._colors["accent"])
+            label_text_color = get_contrasting_text(label_color)
         
             # Add color picker buttons
             tk.Label(self._color_window,
+                fg=label_text_color,
+                bg=label_color,
                 text="Main Color").pack()
-            tk.Button(self._color_window, 
+            tk.Button(self._color_window,
+                fg=button_text_color,
+                bg = self._colors["accent"],
                 text="Pick Main Color",
-                command=lambda: self.change_color("main")).pack()
+                command=lambda: self.set_color("main")).pack()
+
             tk.Label(self._color_window,
+                fg=label_text_color,
+                bg=label_color,
                 text="Accent Color").pack()
-            tk.Button(self._color_window, 
+            tk.Button(self._color_window,
+                fg=button_text_color,
+                bg = self._colors["accent"],
                 text="Pick Accent Color",
-                command=lambda: self.change_color("accent")).pack()
+                command=lambda: self.set_color("accent")).pack()
+
+            tk.Label(self._color_window,
+                fg=label_text_color,
+                bg=label_color,
+                text="Apply").pack()
+            tk.Button(self._color_window,
+                fg=button_text_color,
+                bg=self._colors["accent"],
+                text="Apply",
+                command=self.apply_color).pack()
+            
+            tk.Label(self._color_window,
+                fg=label_text_color,
+                bg=label_color,
+                text="Restore Default Colors").pack()
+            tk.Button(self._color_window,
+                fg=button_text_color,
+                bg = self._colors["accent"],
+                text="Restore Default Colors",
+                command=self.set_default_colors).pack()
         else:
             # Bring prexisting color picker window to the front
             self._color_window.lift()
 
 
-    def change_color(self, key):
+    def set_color(self, key):
         selectedColor = "#FFFFFF"
         selectedColor = colorchooser.askcolor()[1]
         self._color_window.lift()
-        
+
         if selectedColor is not None:
             self._colors[key] = selectedColor
-        self.write_colors()
 
-    
+        # Reopen color window so changes apply
+        self._color_window.destroy()
+        self._color_window = None
+        self.open_color_menu()
+
+
+    def set_default_colors(self):
+        self._colors = {
+            "main" : "#4C721D",
+            "accent" : "#293714"
+        }
+        # Reopen window to apply changes (only if already open)
+        if self._color_window is not None and tk.Toplevel.winfo_exists(self._color_window):
+            self._color_window.destroy()
+            self._color_window = None
+            self.open_color_menu()
+
+
+    def apply_color(self):
+        # Remake window
+        self.write_colors()
+        self._color_window = None
+        self._root.destroy()
+        self._root.quit()
+        self.make_window()
+
     def read_colors(self):
         if Path("colors.json").is_file():
             with open("colors.json", 'r') as file:
@@ -535,7 +592,6 @@ class GUI:
     def write_colors(self):
         with open("colors.json", 'w') as file:
             json.dump(self._colors, file)
-
 
 
 def main():
