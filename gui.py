@@ -12,7 +12,7 @@ from Parser import Parser
 from Input import Input
 from memory import Memory
 from formatWord import format_word
-from colorOperations import lighten_color, get_contrasting_text
+from colorOperations import lighten_color, get_contrasting_text_color
 
 
 class GUI:
@@ -42,8 +42,8 @@ class GUI:
         default_button_color = self._colors["accent"]
 
         label_color = lighten_color(self._colors["accent"])
-        button_text_color = get_contrasting_text(self._colors["accent"])
-        label_text_color = get_contrasting_text(label_color)
+        button_text_color = get_contrasting_text_color(self._colors["accent"])
+        label_text_color = get_contrasting_text_color(label_color)
 
         # Additional variables
         input_background_color = "#FFF"
@@ -499,8 +499,8 @@ class GUI:
 
             # Set color alts
             label_color = lighten_color(self._colors["accent"])
-            button_text_color = get_contrasting_text(self._colors["accent"])
-            label_text_color = get_contrasting_text(label_color)
+            button_text_color = get_contrasting_text_color(self._colors["accent"])
+            label_text_color = get_contrasting_text_color(label_color)
         
             # Add color picker buttons
             tk.Label(self._color_window,
@@ -522,16 +522,6 @@ class GUI:
                 bg = self._colors["accent"],
                 text="Pick Accent Color",
                 command=lambda: self.set_color("accent")).pack()
-
-            tk.Label(self._color_window,
-                fg=label_text_color,
-                bg=label_color,
-                text="Apply").pack()
-            tk.Button(self._color_window,
-                fg=button_text_color,
-                bg=self._colors["accent"],
-                text="Apply",
-                command=self.apply_color).pack()
             
             tk.Label(self._color_window,
                 fg=label_text_color,
@@ -542,6 +532,16 @@ class GUI:
                 bg = self._colors["accent"],
                 text="Restore Default Colors",
                 command=self.set_default_colors).pack()
+            
+            tk.Label(self._color_window,
+                fg=label_text_color,
+                bg=label_color,
+                text="Apply").pack()
+            tk.Button(self._color_window,
+                fg=button_text_color,
+                bg=self._colors["accent"],
+                text="Apply",
+                command=self.apply_color).pack()
         else:
             # Bring prexisting color picker window to the front
             self._color_window.lift()
@@ -577,9 +577,13 @@ class GUI:
         # Remake window
         self.write_colors()
         self._color_window = None
+        self.update_mem_from_gui()
         self._root.destroy()
         self._root.quit()
         self.make_window()
+        for loc in self._gui_memory:
+            print(loc)
+        self.update_gui_from_mem()
 
     def read_colors(self):
         if Path("colors.json").is_file():
