@@ -15,7 +15,7 @@ from Parser import Parser
 from Input import Input
 from memory import Memory
 from formatWord import format_word
-from colorOperations import lighten_color, get_contrasting_text_color
+from color_operations import lighten_color, get_contrasting_text_color
 
 
 class GUI:

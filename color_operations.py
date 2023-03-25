@@ -1,3 +1,5 @@
+'''This module contains a few functions for doing some color transformations.'''
+
 def lighten_color(color, factor = 3.25):
     """" Lightens a hex color (format #FFFFFF) by a factor """
     new_color = '#'
@@ -7,9 +9,9 @@ def lighten_color(color, factor = 3.25):
     return new_color
 
 
-def get_contrasting_text_color(bg):
+def get_contrasting_text_color(bg_color):
     """ Choses either black or white color that will contrast the given color """
     color = "#FFF"
-    if int(bg[1:], 16) > int("666666", 16):
+    if int(bg_color[1:], 16) > int("666666", 16):
         color = "#000"
     return color
