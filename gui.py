@@ -363,19 +363,15 @@ class GUI:
             self._gui_memory[i] = 0
         self.update_gui_from_mem()
 
-    def button_paste(self, running_GUI_memory=False, GUI_memory=None):
-        # Gets what is in paste entry box and puts into memory.
-        # Running GUI memory is to be set to True when this function is used in the run() function.
-        if running_GUI_memory:
-            paste_contents = GUI_memory
-        else:
-            paste_contents = self._paste_entry.get()
-        paste_content_lines = []
+    def button_paste(self):
+        '''Gets what is in paste entry box and puts into memory.'''
+        paste_contents = self._paste_entry.get()
+        paste_content_lines = 0
         new_memory = []
         for i in paste_contents.splitlines():
-            paste_content_lines.append(i)
+            paste_content_lines += 1
             new_memory.append(int(i))
-        if len(paste_content_lines) > 100:
+        if paste_content_lines > 100:
             raise Exception("Pasted memory is longer than 100 lines.")
         for i, word in enumerate(new_memory):
             self._gui_memory[i] = word
@@ -607,6 +603,7 @@ class GUI:
             self._color_window.lift()
 
     def set_color(self, key):
+        '''Asks for a new color and then sets it as the color at _colors.key'''
         selected_color = "#FFFFFF"
         selected_color = colorchooser.askcolor(color=self._colors[key])[1]
         self._color_window.lift()
@@ -620,6 +617,7 @@ class GUI:
         self.open_color_menu()
 
     def set_default_colors(self):
+        '''Resets custom set color values to hard-coded default values'''
         self._colors = {
             "main": "#4C721D",
             "accent": "#293714"
@@ -643,6 +641,8 @@ class GUI:
         self.update_gui_from_mem()
 
     def read_colors(self):
+        '''Reads colors.json for color settings if it exists. Creates a new
+        colors.json if not.'''
         if Path("colors.json").is_file():
             with open("colors.json", 'r', encoding="utf-8") as file:
                 self._colors = json.load(file)
@@ -650,6 +650,8 @@ class GUI:
             self.write_colors()
 
     def write_colors(self):
+        '''Write custom color settings into colors.json. Creates the file if it
+        doesn't exist already'''
         with open("colors.json", 'w', encoding="utf-8") as file:
             json.dump(self._colors, file)
 
