@@ -22,23 +22,23 @@ class Arithmetic:
         '''Add word from memory to word in accumulator'''
         accumulator = self._parent.get_accumulator()
         word = self._parent.get_memory_at_address(memory_index)
-        self._parent.set_accumulator(word + accumulator)
+        self._parent.set_accumulator(accumulator + word)
 
     def subtract(self, memory_index):
         '''Subtract word from memory from the word in accumulator'''
         accumulator = self._parent.get_accumulator()
         word = self._parent.get_memory_at_address(memory_index)
-        self._parent.set_accumulator(word - accumulator)
+        self._parent.set_accumulator(accumulator - word)
 
     def divide(self, memory_index):
         '''Divide word in accumulator by word in a memory index. NOTE: This
         function does floor division, which removes any decimal values'''
         accumulator = self._parent.get_accumulator()
         word = self._parent.get_memory_at_address(memory_index)
-        self._parent.set_accumulator(word // accumulator)
+        self._parent.set_accumulator(accumulator // word)
 
     def multiply(self, memory_index):
         '''Multiply word in accumulator by word in a memory index'''
         accumulator = self._parent.get_accumulator()
         word = self._parent.get_memory_at_address(memory_index)
-        self._parent.set_accumulator(word * accumulator)
+        self._parent.set_accumulator(accumulator * word)

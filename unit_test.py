@@ -2,6 +2,7 @@ import pytest
 from unittest import mock
 import builtins
 from uvsim import Machine
+from Input import Input
 
 def test_add():
     memory = [2000, 3001]
@@ -95,6 +96,7 @@ def test_read():
         while machine.is_running():
             machine.tick()
     assert machine._memory[2] == -1234
+    
     # Test unsigned number
     memory = [1002]
     machine = Machine(memory)
