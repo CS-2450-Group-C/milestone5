@@ -5,7 +5,7 @@
 - [Available Operations](#available-operations)
 - [How to use](#how-to-use)
 - [Accepted 4-digit Word Formats](#accepted-4-digit-word-formats)
-- [Program input](#
+- [Program input](#program-input)
 
 ## What is it?
 The UVSim is a virtual machine that can interpret the machine language BasicML. It has a CPU, an accumulator, and main memory. The accumulator is register that can hold information to be opperated on. The main memory stores 100 instances of a 4-digit integer called a word. A word can either be a value or an instruction. Available instructions are listed below.
