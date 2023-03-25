@@ -55,7 +55,7 @@ class GUI:
         # Initialize the window
         self._root = tk.Tk()
         self._root.configure(bg=background_color)
-        self._root.grid_rowconfigure(0, weight=1)
+        self._root.rowconfigure(0, weight=1)
         self._root.columnconfigure(0, weight=1)
         self._root.resizable(width=False, height=False)
         self._root.title("UVSim")
@@ -494,8 +494,9 @@ class GUI:
             # Make new window
             self._color_window = tk.Toplevel(self._root)
             self._color_window.title("Color Picker")
-            self._color_window.geometry("300x250+50+50")
+            self._color_window.geometry("180x280+50+50")
             self._color_window.configure(bg=self._colors["main"])
+            self._color_window.grid_columnconfigure(0, weight=1)
 
             # Set color alts
             label_color = lighten_color(self._colors["accent"])
@@ -506,42 +507,91 @@ class GUI:
             tk.Label(self._color_window,
                 fg=label_text_color,
                 bg=label_color,
-                text="Main Color").pack()
+                text="Main Color",
+                width=18
+                ).grid(
+                row=0,
+                column=0,
+                pady=(10,0)
+                )
             tk.Button(self._color_window,
                 fg=button_text_color,
                 bg = self._colors["accent"],
                 text="Pick Main Color",
-                command=lambda: self.set_color("main")).pack()
+                command=lambda: self.set_color("main"),
+                width=18,
+                pady=5
+                ).grid(
+                row=1,
+                column=0,
+                pady=(0,10)
+                )
 
             tk.Label(self._color_window,
                 fg=label_text_color,
                 bg=label_color,
-                text="Accent Color").pack()
+                text="Accent Color",
+                width=18
+                ).grid(
+                row=2,
+                column=0,
+                )
             tk.Button(self._color_window,
                 fg=button_text_color,
                 bg = self._colors["accent"],
                 text="Pick Accent Color",
-                command=lambda: self.set_color("accent")).pack()
+                command=lambda: self.set_color("accent"),
+                width=18,
+                pady=5
+                ).grid(
+                row=3,
+                column=0,
+                pady=(0,10)
+                )
             
             tk.Label(self._color_window,
                 fg=label_text_color,
                 bg=label_color,
-                text="Restore Default Colors").pack()
+                text="Restore Default Colors",
+                width=18
+                ).grid(
+                row=4,
+                column=0,
+                )
             tk.Button(self._color_window,
                 fg=button_text_color,
                 bg = self._colors["accent"],
                 text="Restore Default Colors",
-                command=self.set_default_colors).pack()
+                command=self.set_default_colors,
+                width=18,
+                pady=5
+                ).grid(
+                row=5,
+                column=0,
+                pady=(0,10)
+                )
             
             tk.Label(self._color_window,
                 fg=label_text_color,
                 bg=label_color,
-                text="Apply").pack()
+                text="Apply",
+                width=18,
+                ).grid(
+                row=6,
+                column=0,
+                )
             tk.Button(self._color_window,
                 fg=button_text_color,
                 bg=self._colors["accent"],
                 text="Apply",
-                command=self.apply_color).pack()
+                command=self.apply_color,
+                width=18,
+                pady=5,
+                ).grid(
+                row=7,
+                column=0,
+                pady=(0,10)
+                )
         else:
             # Bring prexisting color picker window to the front
             self._color_window.lift()
