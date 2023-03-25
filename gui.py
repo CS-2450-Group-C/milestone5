@@ -112,7 +112,6 @@ class GUI:
             bg=default_button_color,
             text="Color",
             fg=button_text_color,
-            # TODO: Change the command to the color picker
             command=self.open_color_menu,
             width=10,
             height=3).grid(
@@ -373,7 +372,6 @@ class GUI:
             paste_contents = self._paste_entry.get()
         paste_content_lines = []
         new_memory = []
-        j = 0
         for i in paste_contents.splitlines():
             paste_content_lines.append(i)
             new_memory.append(int(i))
@@ -382,17 +380,10 @@ class GUI:
         for i, word in enumerate(new_memory):
             self._gui_memory[i] = word
         self.update_gui_from_mem()
-        # for i in self._word_entry_list:
-        #     i.delete(0, 5)
-        #     if j < len(paste_content_lines):
-        #         i.insert(0, paste_content_lines[j])
-        #     else:
-        #         i.insert(0, "+0")
-        #     j += 1
-        # self._machine = Machine(new_memory)
 
     def button_save(self):
-        # Save function, uses save as function if there is no file that has been imported or saved as.
+        '''Save function, uses save-as function if there is no file that has
+        been imported or saved as.'''
         if not self._current_filepath:
             self.button_save_as()
             return
@@ -431,6 +422,7 @@ class GUI:
         self.update_gui_from_mem()
 
     def update_gui_from_mem(self):
+        '''Copies the GUI's internal memory into GUI memory entry list values'''
         for i, entry in enumerate(self._word_entry_list):
             entry.delete(0, "end")
             if self._gui_memory[i] < 0:
@@ -439,6 +431,7 @@ class GUI:
                 entry.insert(0, f"+{self._gui_memory[i]:04}")
 
     def update_mem_from_gui(self):
+        '''Reads the values in the GUI entry list and copies them to the GUI's intenal memory'''
         for i, entry in enumerate(self._word_entry_list):
             entry.delete(5, "end")  # chop off excessive characters
             try:
@@ -450,12 +443,6 @@ class GUI:
 
     def run(self):
         """Run the program."""
-
-        # Takes the instructions in the GUI and passes it to paste.
-        # Essentially automates clicking the copy button, pasting it in the paste entry, and clicking the paste button.
-        # This ensures that changes made to the memory using the GUI actually occur.
-        # current_GUI_memory = self.final_stringer()
-        # self.button_paste(True, current_GUI_memory)
 
         self.update_mem_from_gui()
         self._machine = Machine(self._gui_memory)
@@ -477,12 +464,13 @@ class GUI:
         del self._machine
 
     def print_to_output(self, text, end="\n"):
+        '''Interface to output text in the GUI's log box'''
         self._output.config(state=tk.NORMAL)
         self._output.insert(tk.END, text + end)
         self._output.config(state=tk.DISABLED)
 
     def wait_for_input(self):
-        # Wait for input
+        '''Wait for input'''
         while True:
             self.print_to_output(
                 f"Awaiting input for memory location {self._machine.get_needs_input()}...")
@@ -503,10 +491,13 @@ class GUI:
             self._machine.set_memory_at_address(
                 self._machine.get_needs_input(), word)
             self.print_to_output(
-                f"{format_word(word)} was stored at memory address {self._machine.get_needs_input()}.")
+                f"{format_word(word)} was stored at memory address \
+{self._machine.get_needs_input()}.")
             break
 
     def open_color_menu(self):
+        '''Creates a color picker window so that the user can change the GUI's
+        color while the main program is running'''
         # Ensure color picker window doesn't exist
         if self._color_window is None or not tk.Toplevel.winfo_exists(self._color_window):
             # Make new window
@@ -616,12 +607,12 @@ class GUI:
             self._color_window.lift()
 
     def set_color(self, key):
-        selectedColor = "#FFFFFF"
-        selectedColor = colorchooser.askcolor(color=self._colors[key])[1]
+        selected_color = "#FFFFFF"
+        selected_color = colorchooser.askcolor(color=self._colors[key])[1]
         self._color_window.lift()
 
-        if selectedColor is not None:
-            self._colors[key] = selectedColor
+        if selected_color is not None:
+            self._colors[key] = selected_color
 
         # Reopen color window so changes apply
         self._color_window.destroy()
@@ -653,21 +644,21 @@ class GUI:
 
     def read_colors(self):
         if Path("colors.json").is_file():
-            with open("colors.json", 'r') as file:
+            with open("colors.json", 'r', encoding="utf-8") as file:
                 self._colors = json.load(file)
         else:
             self.write_colors()
 
     def write_colors(self):
-        with open("colors.json", 'w') as file:
+        with open("colors.json", 'w', encoding="utf-8") as file:
             json.dump(self._colors, file)
 
 
 def main():
     """For testing purposes only."""
-    # Prints 1234 when run
-    memory = [1102, 4300, 1234]
-    machine = Machine(memory)
+    # # Prints 1234 when run
+    # memory = [1102, 4300, 1234]
+    # machine = Machine(memory)
     gui = GUI()
     gui.make_window()
 
