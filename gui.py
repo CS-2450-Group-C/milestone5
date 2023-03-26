@@ -475,6 +475,9 @@ class GUI:
             # Reset for next input
             self._input_entry.delete(0, "end")
             self._input_value = tk.StringVar()
+            # Quit if machine is destroyed
+            if self._machine is None:
+                return
             # Validate Input
             validator = Input()
             validator.validate_input(word)
