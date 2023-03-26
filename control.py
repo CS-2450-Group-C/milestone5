@@ -17,6 +17,10 @@ class Control:
             self.branch_zero(memory_index)
         elif op_code == "3":
             self.halt()
+        else:
+            # Invalid instruction
+            return -1
+        return 0
 
     def branch(self, memory_index):
         '''Set the program counter to the new memory location'''

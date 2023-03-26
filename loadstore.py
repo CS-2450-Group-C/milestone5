@@ -11,6 +11,10 @@ class LoadStore:
             self.load(memory_index)
         elif op_code == "1":
             self.store(memory_index)
+        else:
+            # Invalid instruction
+            return -1
+        return 0
 
     def load(self, memory_index):
         '''Load what is at a location in memory to the accumulator'''

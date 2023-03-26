@@ -6,6 +6,7 @@ from inputoutput import InputOutput
 from arithmetic import Arithmetic
 from loadstore import LoadStore
 from control import Control
+from formatWord import format_word
 
 class Machine:
     '''Machine Class. Represents a machine capable of reading and executing the
@@ -61,18 +62,20 @@ class Machine:
         if instruction < 0:
             return -1
         str_instruction = str(instruction)
+        str_instruction = format_word(str_instruction)[1:]
 
+        valid = 0
         if str_instruction[0] == "1":
-            self.op_io(str_instruction[1], int(str_instruction[2:]))
+            valid = self.op_io(str_instruction[1], int(str_instruction[2:]))
         elif str_instruction[0] == "2":
-            self.op_ls(str_instruction[1], int(str_instruction[2:]))
+            valid = self.op_ls(str_instruction[1], int(str_instruction[2:]))
         elif str_instruction[0] == "3":
-            self.op_ar(str_instruction[1], int(str_instruction[2:]))
+            valid = self.op_ar(str_instruction[1], int(str_instruction[2:]))
         elif str_instruction[0] == "4":
-            self.op_br(str_instruction[1], int(str_instruction[2:]))
+            valid = self.op_br(str_instruction[1], int(str_instruction[2:]))
         else:
-            return -1
-        return 0
+            valid = -1
+        return valid
 
     def is_running(self):
         '''Returns the current running state of the machine instance'''

@@ -17,6 +17,10 @@ class Arithmetic:
             self.divide(memory_index)
         elif op_code == "3":
             self.multiply(memory_index)
+        else:
+            # Invalid instruction
+            return -1
+        return 0
 
     def add(self, memory_index):
         '''Add word from memory to word in accumulator'''

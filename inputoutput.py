@@ -10,6 +10,10 @@ class InputOutput:
             self.read(memory_index)
         elif op_code == "1":
             self.write(memory_index)
+        else:
+            # Invalid instruction
+            return -1
+        return 0
 
     def read(self, memory_index):
         '''Read takes user input and stores that in a location in memory'''
