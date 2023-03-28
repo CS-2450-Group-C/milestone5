@@ -5,7 +5,7 @@ from pathlib import Path
 
 def parse(file_name):
     """Given a BasicML file, returns list of 100 ints representing memory locations."""
-    WORD_SIZE = 4
+    WORD_SIZE = 6
     MEMORY_SIZE = 100
     # Validate given file
     if not Path(file_name).is_file():

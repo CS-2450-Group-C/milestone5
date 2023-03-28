@@ -8,7 +8,7 @@ from memory import Memory
 class Parser:
     """Contains operations for parsing text from an input file 
     into a list and returning that list"""
-    def __init__(self, word_size = 4):
+    def __init__(self, word_size = 6):
         """Constructor for Parser, accepts 1 parameter:
         1. word_size: integer that determines how long parsed words will be"""
         # Word size can be altered
