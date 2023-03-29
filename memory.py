@@ -1,8 +1,9 @@
 class Memory:
 
-    def __init__(self):
+    def __init__(self, num_memory = 250):
         self.i = -1
-        self.memory = [0] * 100
+        self.num_memory = num_memory
+        self.memory = [0] * self.num_memory
 
     def __setitem__(self, index, value):
         self.memory[index] = value
@@ -16,6 +17,6 @@ class Memory:
     
     def __next__(self):
         self.i += 1
-        if self.i < 100:
+        if self.i < self.num_memory:
             return self[self.i]
         raise StopIteration

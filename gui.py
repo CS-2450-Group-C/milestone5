@@ -105,6 +105,22 @@ class GUI:
             padx=default_left_padding,
             pady=default_vert_padding,
             sticky=tk.W)
+        
+        # Create New Window button
+        tk.Button(
+            action_button_container,
+            bg=default_button_color,
+            text="New Window",
+            fg=button_text_color,
+            # TODO: Implement new window function
+            command=self.run,
+            width=15,
+            height=3).grid(
+            row=0,
+            column=2,
+            padx=default_left_padding,
+            pady=default_vert_padding,
+            sticky=tk.W)
 
         # Create color button
         tk.Button(
@@ -116,7 +132,7 @@ class GUI:
             width=10,
             height=3).grid(
             row=0,
-            column=2,
+            column=3,
             padx=default_left_padding,
             pady=default_vert_padding,
             sticky=tk.W)
@@ -251,7 +267,7 @@ class GUI:
         self._paste_entry = Entry(mem_grid)
         self._paste_entry.grid(row=0, column=1, stick=tk.W, padx=2, pady=2)
         self._word_entry_list = []
-        for loc in range(100):
+        for loc in range(self._gui_memory.num_memory):
             tk.Label(mem_grid, text=loc).grid(
                 row=loc + 1, column=0, sticky=tk.E, padx=2, pady=2)
             self._word_entry_list.append(tk.Entry(mem_grid))
