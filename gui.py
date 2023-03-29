@@ -34,6 +34,8 @@ class GUI:
         self._word_entry_list = None
         self._current_filepath = None
         self._gui_memory = Memory()
+        self._copy_memory = []
+        self._copy_gui = None
         self.set_default_colors()
         self.read_colors()
 
@@ -290,7 +292,7 @@ class GUI:
             fg=button_text_color,
             height=small_button_height,
             width=small_button_width,
-            command=self.button_copy).grid(
+            command=self.open_copy_menu).grid(
             row=0,
             column=0,
             padx=mem_button_padding)
@@ -371,6 +373,22 @@ class GUI:
         '''Uses pyperclip to copy final_string to clipboard.'''
         final_string = self.final_stringer()
         pyperclip.copy(final_string)
+    
+    def open_copy_menu(self):
+        # Make new window
+        self._copy_gui = tk.Toplevel(self._root)
+        self._copy_gui.title("Copy")
+        self._copy_gui.configure(bd=5)
+
+        # Entries
+        tk.Label(self._copy_gui, text="Choose the memory range to copy:").pack()
+        tk.Label(self._copy_gui, text="copy start:").pack()
+        tk.Entry(self._copy_gui).pack()
+        tk.Label(self._copy_gui, text="copy end:").pack()
+        tk.Entry(self._copy_gui).pack()
+
+        # Button
+        tk.Button(self._copy_gui, text="Submit").pack()
 
     def button_cut(self):
         '''Calls button_copy, then clears memory entries by setting to +0.'''
