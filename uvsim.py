@@ -65,14 +65,14 @@ class Machine:
         str_instruction = format_word(str_instruction)[1:]
         
         valid = 0
-        if str_instruction[2] == "1":
-            valid = self.op_io(str_instruction[3], int(str_instruction[4:]))
-        elif str_instruction[2] == "2":
-            valid = self.op_ls(str_instruction[3], int(str_instruction[4:]))
-        elif str_instruction[2] == "3":
-            valid = self.op_ar(str_instruction[3], int(str_instruction[4:]))
-        elif str_instruction[2] == "4":
-            valid = self.op_br(str_instruction[3], int(str_instruction[4:]))
+        if str_instruction[1] == "1":
+            valid = self.op_io(str_instruction[2], int(str_instruction[3:]))
+        elif str_instruction[1] == "2":
+            valid = self.op_ls(str_instruction[2], int(str_instruction[3:]))
+        elif str_instruction[1] == "3":
+            valid = self.op_ar(str_instruction[2], int(str_instruction[3:]))
+        elif str_instruction[1] == "4":
+            valid = self.op_br(str_instruction[2], int(str_instruction[3:]))
         else:
             valid = -1
         return valid
