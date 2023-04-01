@@ -115,7 +115,7 @@ class GUI:
             text="New Window",
             fg=button_text_color,
             # TODO: Implement new window function
-            command=self.run,
+            command=make_new_window,
             width=15,
             height=3).grid(
             row=0,
@@ -167,7 +167,7 @@ class GUI:
             padx=default_left_padding,
             sticky=tk.W)
         self._input_entry = input_entry
-        self._input_value = tk.StringVar()
+        self._input_value = tk.StringVar(self._root)
 
         # Input button (Enter)
         input_button = tk.Button(
@@ -449,6 +449,7 @@ class GUI:
             f"File {self._root.filename.split('/')[-1]} was imported successfully")
         self._current_filepath = self._root.filename
         self._root.title(f"UVSim - {self._current_filepath}")
+        self._root.lift()
         self.update_gui_from_mem()
 
     def update_gui_from_mem(self):
@@ -508,7 +509,7 @@ class GUI:
             word = self._input_value.get()
             # Reset for next input
             self._input_entry.delete(0, "end")
-            self._input_value = tk.StringVar()
+            self._input_value = tk.StringVar(self._root)
             # Quit if machine is destroyed
             if self._machine is None:
                 return
@@ -691,6 +692,11 @@ class GUI:
         doesn't exist already'''
         with open("colors.json", 'w', encoding="utf-8") as file:
             json.dump(self._colors, file)
+
+
+def make_new_window():
+    new_window = GUI()
+    new_window.make_window()
 
 
 def main():
