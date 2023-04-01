@@ -456,14 +456,14 @@ class GUI:
         for i, entry in enumerate(self._word_entry_list):
             entry.delete(0, "end")
             if self._gui_memory[i] < 0:
-                entry.insert(0, f"{self._gui_memory[i]:05}")
+                entry.insert(0, f"{self._gui_memory[i]:07}")
             else:
-                entry.insert(0, f"+{self._gui_memory[i]:04}")
+                entry.insert(0, f"+{self._gui_memory[i]:06}")
 
     def update_mem_from_gui(self):
         '''Reads the values in the GUI entry list and copies them to the GUI's intenal memory'''
         for i, entry in enumerate(self._word_entry_list):
-            entry.delete(5, "end")  # chop off excessive characters
+            entry.delete(7, "end")  # chop off excessive characters
             try:
                 self._gui_memory[i] = int(entry.get())
             except ValueError:
@@ -517,7 +517,7 @@ class GUI:
             validator.validate_input(word)
             if not validator.get_validity():
                 self.print_to_output(
-                    "Error: Input must be a 4-digit number. Please try again.")
+                    "Error: Input must be a 6-digit number. Please try again.")
                 continue
             # Store input
             word = int(word)
