@@ -20,16 +20,21 @@ def reformat(memory_list):
 def main():
 
     memory_list = parse(argv[1])
+    reformatted_mem_list = reformat(memory_list)
     
     if len(argv) == 3:
         #2 files names given
-        pass
+        with open(argv[2], "w") as given_file:
+            for i in reformatted_mem_list:
+                if i != 0:
+                    given_file.write("+0" + str(i) + "\n")
+                else:
+                    given_file.write("+" + str(i) + "\n")
     elif len(argv) == 2:
         #1 file name given
-        reformatted_mem_list = reformat(memory_list)
         with open(argv[1], "w") as given_file:
             for i in reformatted_mem_list:
-                if i is not 0:
+                if i != 0:
                     given_file.write("+0" + str(i) + "\n")
                 else:
                     given_file.write("+" + str(i) + "\n")
