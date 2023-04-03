@@ -34,7 +34,7 @@ class GUI:
         self._word_entry_list = None
         self._current_filepath = None
         self._gui_memory = Memory()
-        self._copy_memory = []
+        self._gui_clipboard = []
         self.set_default_colors()
         self.read_colors()
 
@@ -368,15 +368,19 @@ class GUI:
         self._output.insert(tk.END, "Welcome to the UVSim\n")
         self._output.config(state=tk.DISABLED)
 
-    def button_copy(self):
-        '''Uses pyperclip to copy final_string to clipboard.'''
-        final_string = self.final_stringer()
-        pyperclip.copy(final_string)
+    # def button_copy(self):
+    #     '''Uses pyperclip to copy final_string to clipboard.'''
+    #     final_string = self.final_stringer()
+    #     pyperclip.copy(final_string)
 
     def gui_copy(self, start_index, end_index):
+        '''Uses pyperclip to copy final_string to clipboard. But mainly it copies
+        a data range from the gui into to gui clipboard.'''
+        final_string = self.final_stringer()
+        pyperclip.copy(final_string)
         self.update_mem_from_gui()
-        self._copy_memory = self._gui_memory[start_index:end_index+1]
-        print(self._copy_memory)
+        self._gui_clipboard = self._gui_memory[start_index:end_index+1]
+        print(self._gui_clipboard)
     
     def open_copy_menu(self):
         # Make new window
@@ -396,14 +400,15 @@ class GUI:
         # Button
         tk.Button(copy_gui, text="Submit", command=lambda: self.gui_copy(int(start_index.get()), int(end_index.get()))).pack()
 
-    def button_cut(self):
-        '''Calls button_copy, then clears memory entries by setting to +0.'''
-        self.button_copy()
-        for i, _ in enumerate(self._gui_memory):
-            self._gui_memory[i] = 0
-        self.update_gui_from_mem()
+    # def button_cut(self):
+    #     '''Calls button_copy, then clears memory entries by setting to +0.'''
+    #     self.button_copy()
+    #     for i, _ in enumerate(self._gui_memory):
+    #         self._gui_memory[i] = 0
+    #     self.update_gui_from_mem()
 
     def gui_cut(self, start_index, end_index):
+        '''Calls gui_copy, then clears memory entries by setting to +0.'''
         self.gui_copy(start_index, end_index)
         for i in range(start_index, end_index+1):
             self._gui_memory[i] = 0
@@ -443,7 +448,7 @@ class GUI:
 
     def gui_paste(self, paste_index):
         self.update_mem_from_gui()
-        for i, value in enumerate(self._copy_memory):
+        for i, value in enumerate(self._gui_clipboard):
             if paste_index + i > 250-1: # TODO: magic number PLEASE CHANGE
                 break
             self._gui_memory[paste_index + i] = value
