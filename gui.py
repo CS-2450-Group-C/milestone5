@@ -372,6 +372,11 @@ class GUI:
         '''Uses pyperclip to copy final_string to clipboard.'''
         final_string = self.final_stringer()
         pyperclip.copy(final_string)
+
+    def gui_copy(self, start_index, end_index):
+        self.update_mem_from_gui()
+        self._copy_memory = self._gui_memory[start_index:end_index+1]
+        print(self._copy_memory)
     
     def open_copy_menu(self):
         # Make new window
@@ -380,19 +385,27 @@ class GUI:
         copy_gui.configure(bd=5)
 
         # Entries
-        tk.Label(copy_gui, text="Choose the memory range to copy:").pack()
+        tk.Label(copy_gui, text="Choose the memory range (inclusive) to copy:").pack()
         tk.Label(copy_gui, text="copy start:").pack()
-        tk.Entry(copy_gui).pack()
+        start_index = tk.Entry(copy_gui)
+        start_index.pack()
         tk.Label(copy_gui, text="copy end:").pack()
-        tk.Entry(copy_gui).pack()
+        end_index = tk.Entry(copy_gui)
+        end_index.pack()
 
         # Button
-        tk.Button(copy_gui, text="Submit").pack()
+        tk.Button(copy_gui, text="Submit", command=lambda: self.gui_copy(int(start_index.get()), int(end_index.get()))).pack()
 
     def button_cut(self):
         '''Calls button_copy, then clears memory entries by setting to +0.'''
         self.button_copy()
         for i, _ in enumerate(self._gui_memory):
+            self._gui_memory[i] = 0
+        self.update_gui_from_mem()
+
+    def gui_cut(self, start_index, end_index):
+        self.gui_copy(start_index, end_index)
+        for i in range(start_index, end_index+1):
             self._gui_memory[i] = 0
         self.update_gui_from_mem()
 
@@ -403,14 +416,16 @@ class GUI:
         cut_gui.configure(bd=5)
 
         # Entries
-        tk.Label(cut_gui, text="Choose the memory range to copy:").pack()
+        tk.Label(cut_gui, text="Choose the memory range (inclusive) to cut:").pack()
         tk.Label(cut_gui, text="cut start:").pack()
-        tk.Entry(cut_gui).pack()
+        start_index = tk.Entry(cut_gui)
+        start_index.pack()
         tk.Label(cut_gui, text="cut end:").pack()
-        tk.Entry(cut_gui).pack()
+        end_index = tk.Entry(cut_gui)
+        end_index.pack()
 
         # Button
-        tk.Button(cut_gui, text="Submit").pack()
+        tk.Button(cut_gui, text="Submit", command=lambda: self.gui_cut(int(start_index.get()), int(end_index.get()))).pack()
 
     def button_paste(self):
         '''Gets what is in paste entry box and puts into memory.'''
@@ -426,6 +441,14 @@ class GUI:
             self._gui_memory[i] = word
         self.update_gui_from_mem()
 
+    def gui_paste(self, paste_index):
+        self.update_mem_from_gui()
+        for i, value in enumerate(self._copy_memory):
+            if paste_index + i > 250-1: # TODO: magic number PLEASE CHANGE
+                break
+            self._gui_memory[paste_index + i] = value
+        self.update_gui_from_mem()
+
     def open_paste_menu(self):
         # Make new window
         paste_gui = tk.Toplevel(self._root)
@@ -435,10 +458,11 @@ class GUI:
         # Entries
         tk.Label(paste_gui, text="Choose the memory location to paste:").pack()
         tk.Label(paste_gui, text="paste at:").pack()
-        tk.Entry(paste_gui).pack()
+        paste_index = tk.Entry(paste_gui)
+        paste_index.pack()
 
         # Button
-        tk.Button(paste_gui, text="Submit").pack()
+        tk.Button(paste_gui, text="Submit", command=lambda: self.gui_paste(int(paste_index.get()))).pack()
 
     def button_save(self):
         '''Save function, uses save-as function if there is no file that has
