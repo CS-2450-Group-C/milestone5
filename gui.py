@@ -35,7 +35,6 @@ class GUI:
         self._current_filepath = None
         self._gui_memory = Memory()
         self._copy_memory = []
-        self._copy_gui = None
         self.set_default_colors()
         self.read_colors()
 
@@ -304,7 +303,7 @@ class GUI:
             fg=button_text_color,
             height=small_button_height,
             width=small_button_width,
-            command=self.button_cut).grid(
+            command=self.open_cut_menu).grid(
             row=0,
             column=1,
             padx=mem_button_padding)
@@ -316,7 +315,7 @@ class GUI:
             fg=button_text_color,
             height=small_button_height,
             width=small_button_width,
-            command=self.button_paste).grid(
+            command=self.open_paste_menu).grid(
             row=0,
             column=2,
             padx=mem_button_padding)
@@ -376,19 +375,19 @@ class GUI:
     
     def open_copy_menu(self):
         # Make new window
-        self._copy_gui = tk.Toplevel(self._root)
-        self._copy_gui.title("Copy")
-        self._copy_gui.configure(bd=5)
+        copy_gui = tk.Toplevel(self._root)
+        copy_gui.title("Copy")
+        copy_gui.configure(bd=5)
 
         # Entries
-        tk.Label(self._copy_gui, text="Choose the memory range to copy:").pack()
-        tk.Label(self._copy_gui, text="copy start:").pack()
-        tk.Entry(self._copy_gui).pack()
-        tk.Label(self._copy_gui, text="copy end:").pack()
-        tk.Entry(self._copy_gui).pack()
+        tk.Label(copy_gui, text="Choose the memory range to copy:").pack()
+        tk.Label(copy_gui, text="copy start:").pack()
+        tk.Entry(copy_gui).pack()
+        tk.Label(copy_gui, text="copy end:").pack()
+        tk.Entry(copy_gui).pack()
 
         # Button
-        tk.Button(self._copy_gui, text="Submit").pack()
+        tk.Button(copy_gui, text="Submit").pack()
 
     def button_cut(self):
         '''Calls button_copy, then clears memory entries by setting to +0.'''
@@ -396,6 +395,22 @@ class GUI:
         for i, _ in enumerate(self._gui_memory):
             self._gui_memory[i] = 0
         self.update_gui_from_mem()
+
+    def open_cut_menu(self):
+        # Make new window
+        cut_gui = tk.Toplevel(self._root)
+        cut_gui.title("Copy")
+        cut_gui.configure(bd=5)
+
+        # Entries
+        tk.Label(cut_gui, text="Choose the memory range to copy:").pack()
+        tk.Label(cut_gui, text="cut start:").pack()
+        tk.Entry(cut_gui).pack()
+        tk.Label(cut_gui, text="cut end:").pack()
+        tk.Entry(cut_gui).pack()
+
+        # Button
+        tk.Button(cut_gui, text="Submit").pack()
 
     def button_paste(self):
         '''Gets what is in paste entry box and puts into memory.'''
@@ -410,6 +425,20 @@ class GUI:
         for i, word in enumerate(new_memory):
             self._gui_memory[i] = word
         self.update_gui_from_mem()
+
+    def open_paste_menu(self):
+        # Make new window
+        paste_gui = tk.Toplevel(self._root)
+        paste_gui.title("Paste")
+        paste_gui.configure(bd=5)
+
+        # Entries
+        tk.Label(paste_gui, text="Choose the memory location to paste:").pack()
+        tk.Label(paste_gui, text="paste at:").pack()
+        tk.Entry(paste_gui).pack()
+
+        # Button
+        tk.Button(paste_gui, text="Submit").pack()
 
     def button_save(self):
         '''Save function, uses save-as function if there is no file that has
