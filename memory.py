@@ -24,6 +24,6 @@ class Memory:
     
     def __next__(self):
         self.i += 1
-        if self.i < self.num_memory:
+        if self.i < self.get_num_memory():
             return self[self.i]
         raise StopIteration
