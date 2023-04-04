@@ -29,8 +29,7 @@ class Parser:
         # Validate given file
         self.validate_file_name(file_name)
 
-        # List that will be returned
-        # TODO: May need to update this depending on how memory is implemented
+        # Instance of memory for the parser to return
         memory = Memory()
 
         # Open the file
