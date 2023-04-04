@@ -263,7 +263,7 @@ class GUI:
 
         # Create memory location labels and word entry to place into grid
         self._word_entry_list = []
-        for loc in range(self._gui_memory.num_memory):
+        for loc in range(self._gui_memory.get_num_memory()):
             tk.Label(mem_grid, text=loc).grid(
                 row=loc + 1, column=0, sticky=tk.E, padx=2, pady=2)
             self._word_entry_list.append(tk.Entry(mem_grid))
@@ -318,7 +318,8 @@ class GUI:
         # Save button
         tk.Button(
             mem_buttons_container,
-            bg=default_button_color, text="Save",
+            bg=default_button_color, 
+            text="Save",
             fg=button_text_color,
             height=small_button_height,
             width=small_button_width,
@@ -378,23 +379,57 @@ class GUI:
         print(self._gui_clipboard)
     
     def open_copy_menu(self):
+        # Style Variables
+        label_color = lighten_color(self._colors["accent"])
+        label_text_color = get_contrasting_text_color(label_color)
+        button_color = self._colors["accent"]
+        button_text_color = get_contrasting_text_color(self._colors["accent"])
+        background_color = self._colors["main"]
+        
         # Make new window
         copy_gui = tk.Toplevel(self._root)
         copy_gui.title("Copy")
-        copy_gui.configure(bd=5)
-
-        # Entries
-        tk.Label(copy_gui, text="Choose the memory range (inclusive) to copy:").pack()
-        tk.Label(copy_gui, text="copy start:").pack()
+        copy_gui.configure(
+            bd=5,
+            bg=background_color)
+        
+        # Direction Label
+        tk.Label(copy_gui,
+                 font=12,
+                 bg=background_color,
+                 fg=get_contrasting_text_color(background_color),
+                 text="Choose the memory range (inclusive) to copy:").pack(pady=(20, 0), padx=(20, 20))
+        
+        # Start Index Label
+        tk.Label(copy_gui,
+                 text="Copy Start Index:",
+                 fg=label_text_color,
+                 bg=label_color).pack(pady=(20, 0))
+        
+        # Start Index Input Box
         start_index = tk.Entry(copy_gui)
         start_index.pack()
-        tk.Label(copy_gui, text="copy end:").pack()
+        
+        # End Index Label
+        tk.Label(copy_gui, 
+                 text="Copy End Index:",
+                 fg=label_text_color,
+                 bg=label_color).pack(pady=(20, 0))
+        
+        # End Index Input Box
         end_index = tk.Entry(copy_gui)
         end_index.pack()
 
         # Button
-        tk.Button(copy_gui, text="Submit", command=lambda: self.gui_copy(int(start_index.get()), int(end_index.get()))).pack()
-
+        tk.Button(
+            copy_gui, 
+            text="Copy",
+            bg=button_color,
+            fg=button_text_color,
+            width = 15, 
+            height = 3,
+            command=lambda: self.gui_copy(int(start_index.get()), int(end_index.get()))
+            ).pack(pady=(20,20))
 
     def gui_cut(self, start_index, end_index):
         '''Calls gui_copy, then clears memory entries by setting to +0.'''
@@ -404,45 +439,122 @@ class GUI:
         self.update_gui_from_mem()
 
     def open_cut_menu(self):
+        # Style Variables
+        label_color = lighten_color(self._colors["accent"])
+        label_text_color = get_contrasting_text_color(label_color)
+        button_color = self._colors["accent"]
+        button_text_color = get_contrasting_text_color(self._colors["accent"])
+        background_color = self._colors["main"]
+        
         # Make new window
         cut_gui = tk.Toplevel(self._root)
-        cut_gui.title("Copy")
-        cut_gui.configure(bd=5)
+        cut_gui.title("Cut")
+        cut_gui.configure(
+            bd=5,
+            bg=background_color)
 
-        # Entries
-        tk.Label(cut_gui, text="Choose the memory range (inclusive) to cut:").pack()
-        tk.Label(cut_gui, text="cut start:").pack()
+        # Direction Label
+        tk.Label(cut_gui,
+                 font=12,
+                 bg=background_color,
+                 fg=get_contrasting_text_color(background_color),
+                 text="Choose the memory range (inclusive) to cut:").pack(pady=(20, 0), padx=(20, 20))
+        
+        # Start Index Label
+        tk.Label(cut_gui,
+                 text="Cut Start Index:",
+                 fg=label_text_color,
+                 bg=label_color).pack(pady=(20, 0))
+        
+        # Start Index Input Box
         start_index = tk.Entry(cut_gui)
         start_index.pack()
-        tk.Label(cut_gui, text="cut end:").pack()
+
+        # End Index Label
+        tk.Label(cut_gui, 
+                 text="Cut End Index:",
+                 fg=label_text_color,
+                 bg=label_color).pack(pady=(20, 0))
+        
+        # End Index Input Box
         end_index = tk.Entry(cut_gui)
         end_index.pack()
-
+        
         # Button
-        tk.Button(cut_gui, text="Submit", command=lambda: self.gui_cut(int(start_index.get()), int(end_index.get()))).pack()
+        tk.Button(
+            cut_gui, 
+            text="Cut",
+            bg=button_color,
+            fg=button_text_color,
+            width = 15, 
+            height = 3,
+            command=lambda: self.gui_cut(int(start_index.get()), int(end_index.get()))
+            ).pack(pady=(20,20))
+
+    def button_paste(self):
+        '''Gets what is in paste entry box and puts into memory.'''
+        paste_contents = self._paste_entry.get()
+        paste_content_lines = 0
+        new_memory = []
+        for i in paste_contents.splitlines():
+            paste_content_lines += 1
+            new_memory.append(int(i))
+        if paste_content_lines > self._gui_memory.get_num_memory():
+            raise Exception(f"Pasted memory is longer than {self._gui_memory.get_num_memory()} lines.")
+        for i, word in enumerate(new_memory):
+            self._gui_memory[i] = word
+        self.update_gui_from_mem()
 
     def gui_paste(self, paste_index):
         self.update_mem_from_gui()
         for i, value in enumerate(self._gui_clipboard):
-            if paste_index + i > 250-1: # TODO: magic number PLEASE CHANGE
+            if paste_index + i > self._gui_memory.get_num_memory():
                 break
             self._gui_memory[paste_index + i] = value
         self.update_gui_from_mem()
 
     def open_paste_menu(self):
+        # Style Variables
+        label_color = lighten_color(self._colors["accent"])
+        label_text_color = get_contrasting_text_color(label_color)
+        button_color = self._colors["accent"]
+        button_text_color = get_contrasting_text_color(self._colors["accent"])
+        background_color = self._colors["main"]
+        
         # Make new window
         paste_gui = tk.Toplevel(self._root)
         paste_gui.title("Paste")
-        paste_gui.configure(bd=5)
+        paste_gui.configure(
+            bd=5,
+            bg=background_color)
+        
+        # Direction Label
+        tk.Label(paste_gui,
+                 font=12,
+                 bg=background_color,
+                 fg=get_contrasting_text_color(background_color),
+                 text="Choose the memory location to paste:").pack(pady=(20, 0), padx=(20, 20))
 
-        # Entries
-        tk.Label(paste_gui, text="Choose the memory location to paste:").pack()
-        tk.Label(paste_gui, text="paste at:").pack()
+        # Paste Index Label
+        tk.Label(paste_gui,
+                 text="Paste at Index:",
+                 fg=label_text_color,
+                 bg=label_color).pack(pady=(20, 0))
+        
+        # Paste Location Input Box
         paste_index = tk.Entry(paste_gui)
         paste_index.pack()
 
         # Button
-        tk.Button(paste_gui, text="Submit", command=lambda: self.gui_paste(int(paste_index.get()))).pack()
+        tk.Button(
+            paste_gui, 
+            text="Paste",
+            bg=button_color,
+            fg=button_text_color,
+            width = 15, 
+            height = 3,
+            command=lambda: self.gui_paste(int(paste_index.get()))
+            ).pack(pady=(20,20))
 
     def button_save(self):
         '''Save function, uses save-as function if there is no file that has
