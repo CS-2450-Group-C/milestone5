@@ -20,7 +20,7 @@ class Input:
     def validate_input(self, input):
         """Uses a RegEx to check if an input is a valid word"""
         
-        regex = re.search("^\s*((\+|-|)(\d{1,4}))\s*$", input)
+        regex = re.search("^\s*((\+|-|)(\d{1,6}))\s*$", input)
         # Valid Input
         if regex:
             self.set_validity(True)

@@ -30,7 +30,6 @@ class GUI:
         self._input_button = None
         self._input_value = None
         self._colors = None
-        self._paste_entry = None
         self._word_entry_list = None
         self._current_filepath = None
         self._gui_memory = Memory()
@@ -263,10 +262,6 @@ class GUI:
         mem_canvas.create_window((0, 0), window=mem_grid, anchor=tk.NW)
 
         # Create memory location labels and word entry to place into grid
-        paste_label = tk.Label(mem_grid, text="Paste:")
-        paste_label.grid(row=0, column=0, stick=tk.W, padx=2, pady=2)
-        self._paste_entry = Entry(mem_grid)
-        self._paste_entry.grid(row=0, column=1, stick=tk.W, padx=2, pady=2)
         self._word_entry_list = []
         for loc in range(self._gui_memory.get_num_memory()):
             tk.Label(mem_grid, text=loc).grid(
@@ -435,14 +430,6 @@ class GUI:
             height = 3,
             command=lambda: self.gui_copy(int(start_index.get()), int(end_index.get()))
             ).pack(pady=(20,20))
-    
-    
-    # def button_cut(self):
-    #     '''Calls button_copy, then clears memory entries by setting to +0.'''
-    #     self.button_copy()
-    #     for i, _ in enumerate(self._gui_memory):
-    #         self._gui_memory[i] = 0
-    #     self.update_gui_from_mem()
 
     def gui_cut(self, start_index, end_index):
         '''Calls gui_copy, then clears memory entries by setting to +0.'''
