@@ -527,19 +527,47 @@ class GUI:
         self.update_gui_from_mem()
 
     def open_paste_menu(self):
+        # Style Variables
+        label_color = lighten_color(self._colors["accent"])
+        label_text_color = get_contrasting_text_color(label_color)
+        button_color = self._colors["accent"]
+        button_text_color = get_contrasting_text_color(self._colors["accent"])
+        background_color = self._colors["main"]
+        
         # Make new window
         paste_gui = tk.Toplevel(self._root)
         paste_gui.title("Paste")
-        paste_gui.configure(bd=5)
+        paste_gui.configure(
+            bd=5,
+            bg=background_color)
+        
+        # Direction Label
+        tk.Label(paste_gui,
+                 font=12,
+                 bg=background_color,
+                 fg=get_contrasting_text_color(background_color),
+                 text="Choose the memory location to paste:").pack(pady=(20, 0), padx=(20, 20))
 
-        # Entries
-        tk.Label(paste_gui, text="Choose the memory location to paste:").pack()
-        tk.Label(paste_gui, text="Paste at Index:").pack()
+        # Paste Index Label
+        tk.Label(paste_gui,
+                 text="Paste at Index:",
+                 fg=label_text_color,
+                 bg=label_color).pack(pady=(20, 0))
+        
+        # Paste Location Input Box
         paste_index = tk.Entry(paste_gui)
         paste_index.pack()
 
         # Button
-        tk.Button(paste_gui, text="Paste", command=lambda: self.gui_paste(int(paste_index.get()))).pack()
+        tk.Button(
+            paste_gui, 
+            text="Paste",
+            bg=button_color,
+            fg=button_text_color,
+            width = 15, 
+            height = 3,
+            command=lambda: self.gui_paste(int(paste_index.get()))
+            ).pack(pady=(20,20))
 
     def button_save(self):
         '''Save function, uses save-as function if there is no file that has
