@@ -4,6 +4,7 @@
 - [Required Libraries](#required-libraries)
 - [Available Operations](#available-operations)
 - [How to use](#how-to-use)
+- [GUI Interface](#gui-interface)
 - [Accepted 6-digit Word Formats](#accepted-6-digit-word-formats)
 - [Program input](#program-input)
 
