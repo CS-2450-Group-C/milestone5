@@ -369,14 +369,55 @@ class GUI:
     #     final_string = self.final_stringer()
     #     pyperclip.copy(final_string)
 
-    def gui_copy(self, start_index, end_index):
+    def gui_copy(self, start_index, end_index, calling_copy_from_cut = False):
         '''Uses pyperclip to copy final_string to clipboard. But mainly it copies
         a data range from the gui into to gui clipboard.'''
+        
+        # Check to make sure the end_index does not exceed the bounds of memory
+        if end_index >= self._gui_memory.get_num_memory():
+            self.print_to_output(f"Copy failed: The end index: {end_index} is larger than the maximum index: {self._gui_memory.get_num_memory() - 1}.")
+            return
+        
+        # Check to make sure the indices are not negative
+        if start_index < 0 or end_index < 0:
+            self.print_to_output(f"Copy failed: A cut index cannot be negative.")
+            return
+        
+        # Check to make sure the end_index is greater than the start_index
+        if start_index > end_index:
+            self.print_to_output(f"Copy failed: The start index: {start_index} is larger than the end index: {end_index}.")
+            return
+        
+        # Sample data to output to the output box
+        min_num_sample = 5
+        if (end_index - start_index) >  min_num_sample:
+            end_sample = (start_index + min_num_sample)     
+        else:
+            end_sample = (end_index + 1)
+        sample_data = self._gui_memory[start_index:end_sample]
+        
+        # Copy the data
         final_string = self.final_stringer()
         pyperclip.copy(final_string)
         self.update_mem_from_gui()
         self._gui_clipboard = self._gui_memory[start_index:end_index+1]
         print(self._gui_clipboard)
+
+        # Don't output the successful copy if calling from cut
+        if calling_copy_from_cut:
+            return
+        
+        # Output on successful copy
+        cut_output_text = f"Successfully copied words from memory address {start_index} to {end_index}:\n"
+        sample_text = f"Sample of words that were copied:\n"
+        sample_text += " ".join(f"{format_word(sample)}," for sample in sample_data)
+        
+        if len(sample_data) >= min_num_sample:
+            sample_text += "..."
+        cut_output_text += f"{sample_text}"
+
+        self.print_to_output(cut_output_text)
+
     
     def open_copy_menu(self):
         # Style Variables
@@ -433,10 +474,47 @@ class GUI:
 
     def gui_cut(self, start_index, end_index):
         '''Calls gui_copy, then clears memory entries by setting to +0.'''
-        self.gui_copy(start_index, end_index)
+        
+        # Check to make sure the end_index does not exceed the bounds of memory
+        if end_index >= self._gui_memory.get_num_memory():
+            self.print_to_output(f"Cut failed: The end index: {end_index} is larger than the maximum index: {self._gui_memory.get_num_memory() - 1}.")
+            return
+        
+        # Check to make sure the indices are not negative
+        if start_index < 0 or end_index < 0:
+            self.print_to_output(f"Cut failed: A cut index cannot be negative.")
+            return
+        
+        # Check to make sure the end_index is greater than the start_index
+        if start_index > end_index:
+            self.print_to_output(f"Cut failed: The start index: {start_index} is larger than the end index: {end_index}.")
+            return
+        
+        # Sample data to output to the output box
+        min_num_sample = 5
+        if (end_index - start_index) >  min_num_sample:
+            end_sample = (start_index + min_num_sample)     
+        else:
+            end_sample = (end_index + 1)
+        sample_data = self._gui_memory[start_index:end_sample]
+        
+        # Copy the data to the clipboard, update memory to be 0
+        calling_copy_from_cut = True
+        self.gui_copy(start_index, end_index, calling_copy_from_cut)
         for i in range(start_index, end_index+1):
             self._gui_memory[i] = 0
         self.update_gui_from_mem()
+            
+        # Output on successful cut
+        cut_output_text = f"Successfully cut words from memory address {start_index} to {end_index}:\n"
+        sample_text = f"Sample of words that were cut:\n"
+        sample_text += " ".join(f"{format_word(sample)}," for sample in sample_data)
+        
+        if len(sample_data) >= min_num_sample:
+            sample_text += "..."
+        cut_output_text += f"{sample_text}"
+
+        self.print_to_output(cut_output_text)
 
     def open_cut_menu(self):
         # Style Variables
@@ -506,12 +584,29 @@ class GUI:
         self.update_gui_from_mem()
 
     def gui_paste(self, paste_index):
+        # Check to make sure the paste_index does not exceed the bounds of memory
+        if paste_index >= self._gui_memory.get_num_memory():
+            self.print_to_output(f"Paste failed: The paste index: {paste_index} is larger than the maximum index: {self._gui_memory.get_num_memory() - 1}.")
+            return
+        
+        # Check to make sure the indices are not negative
+        if paste_index < 0:
+            self.print_to_output(f"Paste failed: A paste index cannot be negative.")
+            return
+
+        # Update the memory for the machine
         self.update_mem_from_gui()
         for i, value in enumerate(self._gui_clipboard):
             if paste_index + i > self._gui_memory.get_num_memory():
                 break
             self._gui_memory[paste_index + i] = value
+        # Use the updated memory from the machine to update the gui
         self.update_gui_from_mem()
+
+        # Output on successful cut
+        cut_output_text = f"Successfully pasted to memory address {paste_index}."
+        self.print_to_output(cut_output_text)
+
 
     def open_paste_menu(self):
         # Style Variables

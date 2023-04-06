@@ -56,7 +56,7 @@ class Input:
 
             # Ask the user for valid input again
             if not self.get_validity():
-                print("Error: Input must be a 4-digit number. Please try again.")
+                print("Error: Input must be a 6-digit number. Please try again.")
 
         return new_word
 
