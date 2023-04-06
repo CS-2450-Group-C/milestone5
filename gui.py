@@ -408,15 +408,15 @@ class GUI:
             return
         
         # Output on successful copy
-        cut_output_text = f"Successfully copied words from memory address {start_index} to {end_index}:\n"
+        output_text = f"Successfully copied words from memory address {start_index} to {end_index}:\n"
         sample_text = f"Sample of words that were copied:\n"
         sample_text += " ".join(f"{format_word(sample)}," for sample in sample_data)
         
         if len(sample_data) >= min_num_sample:
             sample_text += "..."
-        cut_output_text += f"{sample_text}"
+        output_text += f"{sample_text}"
 
-        self.print_to_output(cut_output_text)
+        self.print_to_output(output_text)
 
     
     def open_copy_menu(self):
@@ -506,15 +506,15 @@ class GUI:
         self.update_gui_from_mem()
             
         # Output on successful cut
-        cut_output_text = f"Successfully cut words from memory address {start_index} to {end_index}:\n"
+        output_text = f"Successfully cut words from memory address {start_index} to {end_index}:\n"
         sample_text = f"Sample of words that were cut:\n"
         sample_text += " ".join(f"{format_word(sample)}," for sample in sample_data)
         
         if len(sample_data) >= min_num_sample:
             sample_text += "..."
-        cut_output_text += f"{sample_text}"
+        output_text += f"{sample_text}"
 
-        self.print_to_output(cut_output_text)
+        self.print_to_output(output_text)
 
     def open_cut_menu(self):
         # Style Variables
@@ -597,15 +597,25 @@ class GUI:
         # Update the memory for the machine
         self.update_mem_from_gui()
         for i, value in enumerate(self._gui_clipboard):
-            if paste_index + i > self._gui_memory.get_num_memory():
+            if paste_index + i >= self._gui_memory.get_num_memory():
                 break
             self._gui_memory[paste_index + i] = value
         # Use the updated memory from the machine to update the gui
         self.update_gui_from_mem()
 
-        # Output on successful cut
-        cut_output_text = f"Successfully pasted to memory address {paste_index}."
-        self.print_to_output(cut_output_text)
+        # Check if the paste will fit in memory
+        if (paste_index + len(self._gui_clipboard)) > self._gui_memory.get_num_memory():
+            self.print_to_output(f"Warning: Some data was not pasted. The length of the clipboard added to the paste index exceeds the bounds of memory.")
+            
+            # Output on partially successful paste
+            total_pasted = self._gui_memory.get_num_memory() - paste_index
+            output_text = f"Pasted {total_pasted} word(s) starting at memory address {paste_index}."
+        else:
+            # Output on successful paste
+            output_text = f"Successfully pasted to memory address {paste_index}."
+        
+        # Print the paste message
+        self.print_to_output(output_text)
 
 
     def open_paste_menu(self):
