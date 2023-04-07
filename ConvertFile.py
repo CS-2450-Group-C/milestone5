@@ -31,9 +31,6 @@ def main():
     parser_obj = Parser()
     memory_list = parser_obj.parse(argv[1])
     reformatted_mem_list = reformat(memory_list)
-    for i in reformatted_mem_list:
-        print(i)
-    
     if len(argv) == 3:
         #2 files names given
         write_file(reformatted_mem_list, 2)
