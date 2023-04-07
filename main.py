@@ -1,7 +1,7 @@
 '''Main module. Enables the invocation and running of the UVSim machine'''
 import sys
 from uvsim import Machine
-from parse import parse
+from Parser import Parser
 from gui import GUI
 from Input import Input
 from formatWord import format_word
@@ -18,8 +18,10 @@ def main():
     ## Run from command line if file is given
     # Fill memory from given file
     memory = []
+    parser_obj = Parser()
     try:
-        memory = parse(sys.argv[1])
+        print (sys.argv[1])
+        memory = parser_obj.parse(sys.argv[1])
     except ValueError as ex:
         print(ex)
         return
