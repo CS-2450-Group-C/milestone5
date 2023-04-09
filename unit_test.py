@@ -3,6 +3,7 @@ from unittest import mock
 import builtins
 from uvsim import Machine
 from Input import Input
+from ConvertFile import reformat
 
 def test_add():
     memory = [20000, 30001]
@@ -178,3 +179,10 @@ def test_halt():
         machine.tick()
         count += 1
     assert count == 1
+
+def test_converter():
+    old_instructions = [1025, 5500, -1234, 0000]
+    new_instructions = reformat(old_instructions)
+    target_instructions = [10025, 5500, -1234, 0]
+    print(new_instructions)
+    assert new_instructions == target_instructions

@@ -3,9 +3,9 @@ from sys import argv
 from Parser import Parser
 
 def reformat(memory_list):
-    #list_of_commands = [10, 11, 20, 21, 30, 31, 32, 33, 40, 41, 42, 43]
+    list_of_commands = [10, 11, 20, 21, 30, 31, 32, 33, 40, 41, 42, 43]
     for count, i in enumerate(memory_list):
-        if len(str(i)) == 4:
+        if len(str(i)) == 4 and int(str(i)[:2]) in list_of_commands:
             #if is ordinary old format word
             i = str(i)
             i = i[:2] + "0" + i[2:]
@@ -34,9 +34,11 @@ def main():
     if len(argv) == 3:
         #2 files names given
         write_file(reformatted_mem_list, 2)
+        print("File saved with new format")
     elif len(argv) == 2:
         #1 file name given
         write_file(reformatted_mem_list, 1)
+        print("File converted to new format")
     else:
         print("Error: No file name given.")
 
