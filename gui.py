@@ -4,7 +4,6 @@ run the GUI. Create an instance of the class and then call make_window()'''
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import colorchooser
-from tkinter import Entry
 from pathlib import Path
 import contextlib
 import io
@@ -105,14 +104,13 @@ class GUI:
             padx=default_left_padding,
             pady=default_vert_padding,
             sticky=tk.W)
-        
+
         # Create New Window button
         tk.Button(
             action_button_container,
             bg=default_button_color,
             text="New Window",
             fg=button_text_color,
-            # TODO: Implement new window function
             command=make_new_window,
             width=15,
             height=3).grid(
@@ -318,7 +316,7 @@ class GUI:
         # Save button
         tk.Button(
             mem_buttons_container,
-            bg=default_button_color, 
+            bg=default_button_color,
             text="Save",
             fg=button_text_color,
             height=small_button_height,
@@ -364,38 +362,35 @@ class GUI:
         self._output.insert(tk.END, "Welcome to the UVSim\n")
         self._output.config(state=tk.DISABLED)
 
-    # def button_copy(self):
-    #     '''Uses pyperclip to copy final_string to clipboard.'''
-    #     final_string = self.final_stringer()
-    #     pyperclip.copy(final_string)
-
     def gui_copy(self, start_index, end_index, calling_copy_from_cut = False):
         '''Uses pyperclip to copy final_string to clipboard. But mainly it copies
         a data range from the gui into to gui clipboard.'''
-        
+
         # Check to make sure the end_index does not exceed the bounds of memory
         if end_index >= self._gui_memory.get_num_memory():
-            self.print_to_output(f"Copy failed: The end index: {end_index} is larger than the maximum index: {self._gui_memory.get_num_memory() - 1}.")
+            self.print_to_output(f"Copy failed: The end index: {end_index} is \
+larger than the maximum index: {self._gui_memory.get_num_memory() - 1}.")
             return
-        
+
         # Check to make sure the indices are not negative
         if start_index < 0 or end_index < 0:
-            self.print_to_output(f"Copy failed: A cut index cannot be negative.")
+            self.print_to_output("Copy failed: A cut index cannot be negative.")
             return
-        
+
         # Check to make sure the end_index is greater than the start_index
         if start_index > end_index:
-            self.print_to_output(f"Copy failed: The start index: {start_index} is larger than the end index: {end_index}.")
+            self.print_to_output(f"Copy failed: The start index: {start_index} \
+is larger than the end index: {end_index}.")
             return
-        
+
         # Sample data to output to the output box
         min_num_sample = 5
         if (end_index - start_index) >  min_num_sample:
-            end_sample = (start_index + min_num_sample)     
+            end_sample = start_index + min_num_sample
         else:
-            end_sample = (end_index + 1)
+            end_sample = end_index + 1
         sample_data = self._gui_memory[start_index:end_sample]
-        
+
         # Copy the data
         final_string = self.final_stringer()
         pyperclip.copy(final_string)
@@ -406,110 +401,116 @@ class GUI:
         # Don't output the successful copy if calling from cut
         if calling_copy_from_cut:
             return
-        
+
         # Output on successful copy
-        output_text = f"Successfully copied words from memory address {start_index} to {end_index}:\n"
-        sample_text = f"Sample of words that were copied:\n"
+        output_text = f"Successfully copied words from memory address \
+{start_index} to {end_index}:\n"
+        sample_text = "Sample of words that were copied:\n"
         sample_text += " ".join(f"{format_word(sample)}," for sample in sample_data)
-        
+
         if len(sample_data) >= min_num_sample:
             sample_text += "..."
         output_text += f"{sample_text}"
 
         self.print_to_output(output_text)
 
-    
+
     def open_copy_menu(self):
+        '''opens a GUI dialogue for a user to choose what range of the program
+        memory they would like to copy to the GUI clipboard'''
         # Style Variables
         label_color = lighten_color(self._colors["accent"])
         label_text_color = get_contrasting_text_color(label_color)
         button_color = self._colors["accent"]
         button_text_color = get_contrasting_text_color(self._colors["accent"])
         background_color = self._colors["main"]
-        
+
         # Make new window
         copy_gui = tk.Toplevel(self._root)
         copy_gui.title("Copy")
         copy_gui.configure(
             bd=5,
             bg=background_color)
-        
+
         # Direction Label
         tk.Label(copy_gui,
                  font=12,
                  bg=background_color,
                  fg=get_contrasting_text_color(background_color),
-                 text="Choose the memory range (inclusive) to copy:").pack(pady=(20, 0), padx=(20, 20))
-        
+                 text="Choose the memory range (inclusive) to copy:"
+                 ).pack(pady=(20, 0), padx=(20, 20))
+
         # Start Index Label
         tk.Label(copy_gui,
                  text="Copy Start Index:",
                  fg=label_text_color,
                  bg=label_color).pack(pady=(20, 0))
-        
+
         # Start Index Input Box
         start_index = tk.Entry(copy_gui)
         start_index.pack()
-        
+
         # End Index Label
-        tk.Label(copy_gui, 
+        tk.Label(copy_gui,
                  text="Copy End Index:",
                  fg=label_text_color,
                  bg=label_color).pack(pady=(20, 0))
-        
+
         # End Index Input Box
         end_index = tk.Entry(copy_gui)
         end_index.pack()
 
         # Button
         tk.Button(
-            copy_gui, 
+            copy_gui,
             text="Copy",
             bg=button_color,
             fg=button_text_color,
-            width = 15, 
+            width = 15,
             height = 3,
             command=lambda: self.gui_copy(int(start_index.get()), int(end_index.get()))
             ).pack(pady=(20,20))
 
     def gui_cut(self, start_index, end_index):
         '''Calls gui_copy, then clears memory entries by setting to +0.'''
-        
+
         # Check to make sure the end_index does not exceed the bounds of memory
         if end_index >= self._gui_memory.get_num_memory():
-            self.print_to_output(f"Cut failed: The end index: {end_index} is larger than the maximum index: {self._gui_memory.get_num_memory() - 1}.")
+            self.print_to_output(f"Cut failed: The end index: {end_index} is larger \
+than the maximum index: {self._gui_memory.get_num_memory() - 1}.")
             return
-        
+
         # Check to make sure the indices are not negative
         if start_index < 0 or end_index < 0:
-            self.print_to_output(f"Cut failed: A cut index cannot be negative.")
+            self.print_to_output("Cut failed: A cut index cannot be negative.")
             return
-        
+
         # Check to make sure the end_index is greater than the start_index
         if start_index > end_index:
-            self.print_to_output(f"Cut failed: The start index: {start_index} is larger than the end index: {end_index}.")
+            self.print_to_output(f"Cut failed: The start index: {start_index} is \
+larger than the end index: {end_index}.")
             return
-        
+
         # Sample data to output to the output box
         min_num_sample = 5
         if (end_index - start_index) >  min_num_sample:
-            end_sample = (start_index + min_num_sample)     
+            end_sample = start_index + min_num_sample
         else:
-            end_sample = (end_index + 1)
+            end_sample = end_index + 1
         sample_data = self._gui_memory[start_index:end_sample]
-        
+
         # Copy the data to the clipboard, update memory to be 0
         calling_copy_from_cut = True
         self.gui_copy(start_index, end_index, calling_copy_from_cut)
         for i in range(start_index, end_index+1):
             self._gui_memory[i] = 0
         self.update_gui_from_mem()
-            
+
         # Output on successful cut
         output_text = f"Successfully cut words from memory address {start_index} to {end_index}:\n"
-        sample_text = f"Sample of words that were cut:\n"
+        sample_text = "Sample of words that were cut:\n"
         sample_text += " ".join(f"{format_word(sample)}," for sample in sample_data)
-        
+
         if len(sample_data) >= min_num_sample:
             sample_text += "..."
         output_text += f"{sample_text}"
@@ -517,13 +518,16 @@ class GUI:
         self.print_to_output(output_text)
 
     def open_cut_menu(self):
+        '''opens a GUI dialoge that allows the user to copy a range of the
+        program memory into the GUI clipboard, replacing the GUI memory in that
+        range with 0s'''
         # Style Variables
         label_color = lighten_color(self._colors["accent"])
         label_text_color = get_contrasting_text_color(label_color)
         button_color = self._colors["accent"]
         button_text_color = get_contrasting_text_color(self._colors["accent"])
         background_color = self._colors["main"]
-        
+
         # Make new window
         cut_gui = tk.Toplevel(self._root)
         cut_gui.title("Cut")
@@ -536,62 +540,52 @@ class GUI:
                  font=12,
                  bg=background_color,
                  fg=get_contrasting_text_color(background_color),
-                 text="Choose the memory range (inclusive) to cut:").pack(pady=(20, 0), padx=(20, 20))
-        
+                 text="Choose the memory range (inclusive) to cut:"
+                 ).pack(pady=(20, 0), padx=(20, 20))
+
         # Start Index Label
         tk.Label(cut_gui,
                  text="Cut Start Index:",
                  fg=label_text_color,
                  bg=label_color).pack(pady=(20, 0))
-        
+
         # Start Index Input Box
         start_index = tk.Entry(cut_gui)
         start_index.pack()
 
         # End Index Label
-        tk.Label(cut_gui, 
+        tk.Label(cut_gui,
                  text="Cut End Index:",
                  fg=label_text_color,
                  bg=label_color).pack(pady=(20, 0))
-        
+
         # End Index Input Box
         end_index = tk.Entry(cut_gui)
         end_index.pack()
-        
+
         # Button
         tk.Button(
-            cut_gui, 
+            cut_gui,
             text="Cut",
             bg=button_color,
             fg=button_text_color,
-            width = 15, 
+            width = 15,
             height = 3,
             command=lambda: self.gui_cut(int(start_index.get()), int(end_index.get()))
             ).pack(pady=(20,20))
 
-    def button_paste(self):
-        '''Gets what is in paste entry box and puts into memory.'''
-        paste_contents = self._paste_entry.get()
-        paste_content_lines = 0
-        new_memory = []
-        for i in paste_contents.splitlines():
-            paste_content_lines += 1
-            new_memory.append(int(i))
-        if paste_content_lines > self._gui_memory.get_num_memory():
-            raise Exception(f"Pasted memory is longer than {self._gui_memory.get_num_memory()} lines.")
-        for i, word in enumerate(new_memory):
-            self._gui_memory[i] = word
-        self.update_gui_from_mem()
-
     def gui_paste(self, paste_index):
+        '''pastes the GUI clipboard to the GUI memory entry-by-entry, starting
+        at the user-specifiend index and ending with the last GUI clipboard item'''
         # Check to make sure the paste_index does not exceed the bounds of memory
         if paste_index >= self._gui_memory.get_num_memory():
-            self.print_to_output(f"Paste failed: The paste index: {paste_index} is larger than the maximum index: {self._gui_memory.get_num_memory() - 1}.")
+            self.print_to_output(f"Paste failed: The paste index: {paste_index} is \
+larger than the maximum index: {self._gui_memory.get_num_memory() - 1}.")
             return
-        
+
         # Check to make sure the indices are not negative
         if paste_index < 0:
-            self.print_to_output(f"Paste failed: A paste index cannot be negative.")
+            self.print_to_output("Paste failed: A paste index cannot be negative.")
             return
 
         # Update the memory for the machine
@@ -605,34 +599,37 @@ class GUI:
 
         # Check if the paste will fit in memory
         if (paste_index + len(self._gui_clipboard)) > self._gui_memory.get_num_memory():
-            self.print_to_output(f"Warning: Some data was not pasted. The length of the clipboard added to the paste index exceeds the bounds of memory.")
-            
+            self.print_to_output("Warning: Some data was not pasted. The length of \
+the clipboard added to the paste index exceeds the bounds of memory.")
+
             # Output on partially successful paste
             total_pasted = self._gui_memory.get_num_memory() - paste_index
             output_text = f"Pasted {total_pasted} word(s) starting at memory address {paste_index}."
         else:
             # Output on successful paste
             output_text = f"Successfully pasted to memory address {paste_index}."
-        
+
         # Print the paste message
         self.print_to_output(output_text)
 
 
     def open_paste_menu(self):
+        '''opens a GUI dialogue that allows the user to choose an index at which
+        they would like the paste the GUI clipboard into the GUI memory'''
         # Style Variables
         label_color = lighten_color(self._colors["accent"])
         label_text_color = get_contrasting_text_color(label_color)
         button_color = self._colors["accent"]
         button_text_color = get_contrasting_text_color(self._colors["accent"])
         background_color = self._colors["main"]
-        
+
         # Make new window
         paste_gui = tk.Toplevel(self._root)
         paste_gui.title("Paste")
         paste_gui.configure(
             bd=5,
             bg=background_color)
-        
+
         # Direction Label
         tk.Label(paste_gui,
                  font=12,
@@ -645,18 +642,18 @@ class GUI:
                  text="Paste at Index:",
                  fg=label_text_color,
                  bg=label_color).pack(pady=(20, 0))
-        
+
         # Paste Location Input Box
         paste_index = tk.Entry(paste_gui)
         paste_index.pack()
 
         # Button
         tk.Button(
-            paste_gui, 
+            paste_gui,
             text="Paste",
             bg=button_color,
             fg=button_text_color,
-            width = 15, 
+            width = 15,
             height = 3,
             command=lambda: self.gui_paste(int(paste_index.get()))
             ).pack(pady=(20,20))
@@ -945,6 +942,7 @@ class GUI:
 
 
 def make_new_window():
+    '''creates yet another window for the purpose of multi-tasking programming'''
     new_window = GUI()
     new_window.make_window()
 
