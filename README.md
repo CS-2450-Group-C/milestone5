@@ -13,7 +13,12 @@
 - [GUI Interface](#gui-interface)
   - [Memory editor](#memory-editor)
 - [Accepted 6-digit Word Formats](#accepted-6-digit-word-formats)
+- [File version conversion utility](#file-version-conversion-utility)
+  - [Convert-in-place](#convert-in-place)
+  - [Convert-as](#convert-as)
 - [Program input](#program-input)
+
+**Notice:** newer versions of UVSim utilize a different file format than the older version. For information about converting old files to the new format, see [File version conversion utility](#file-version-conversion-utility).
 
 ## What is it?
 The UVSim is a virtual machine that can interpret the machine language BasicML. It has a CPU, an accumulator, and main memory. The accumulator is register that can hold information to be opperated on. The main memory stores 250 instances of a 6-digit integer called a word. A word can either be a value or an instruction. Available instructions are listed below.
@@ -89,5 +94,20 @@ Users can modify the contents of BasicML programs using the UVSim's GUI memory e
             (blank lines default to 000000)
 -9999999    (Oversized words default to 000000)
 ```
+## File version conversion utility
+Previous versions of UVSim used a different format for the program files that expected 4-digit words rather than the 6-digit words accepted now. UVSim comes with a command-line utility for converting the old-style program files into the 6-digit new-style.
+### Convert-in-place
+To immediately convert a file, invoke the converter utility like this:
+```
+python3 ConvertFile.py <old-style.txt>
+```
+This will overwrite the existing file, and the file should now be readable for UVSim.
+### Convert-as
+To convert a file as a new file, invoke the converter utility like this:
+```
+python3 ConvertFile.py <old-style.txt> <new-style.txt>
+```
+This will write the converted program into a new file of a chosen name, leaving the original old-style program file untouched.
+
 ## Program Input
 If a program that contains a user input instruction is run, the user can use the GUI to provide the input. To do so, run the said program using the Run button. When the program gets to the user input instruction, then a message will appear in the output text box stating that the program is waiting for input, to provide the input, type it into the Input textbox and click the Enter button.
